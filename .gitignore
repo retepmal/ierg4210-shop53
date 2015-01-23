@@ -1,0 +1,14 @@
+# OSX system files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# OSX thumbnails
+._*
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Windows folder config file
+Desktop.ini
