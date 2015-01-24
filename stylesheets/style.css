@@ -1,0 +1,135 @@
+#store-nav { height: 65px; }
+#store-title {
+    color: white;
+    cursor: pointer;
+}
+#cart {
+    background-color: #FCD729;
+    padding: 10px;
+    position: absolute;
+    right: 0;
+    top: 25px;
+    z-index: 99;
+}
+#cart-summary {
+    position: relative;
+    margin: 0;
+}
+#cart-detail, .cart-total {
+    display: none;
+}
+#cart:hover #cart-detail {
+    display: block;
+}
+#cart:hover .cart-total {
+    display: inline-block;
+}
+
+#cart-detail td {
+    vertical-align: middle;
+}
+td.cart-name {
+    color: #2e8bcc;
+    cursor: pointer;
+}
+td.cart-name:hover {
+    color: #285281;
+    text-decoration: underline;
+}
+td.cart-qty .input-group {
+    max-width: 100px;
+}
+td.cart-qty button {
+    width: 30px;
+    height: 34px;
+    background-color: #ecf0f1;
+}
+td.cart-qty button:hover {
+    background-color: #bdc3c7;
+}
+td.cart-qty button[data-type="minus"] {
+    color: #c0392b;
+}
+td.cart-qty button[data-type="plus"] {
+    color: #339933;
+}
+td.cart-qty input {
+    max-width: 42px;
+}
+.cart-checkout {
+    float: right;
+}
+
+ol.breadcrumb a {
+    color: #b8761f;
+}
+
+ul.product-list {
+    padding: 0;
+    margin: 0;
+}
+ul.product-list li {
+    display: inline-block;
+    margin-right: 15px;
+    margin-bottom: 15px;
+    width: 170px;
+    height: 235px;
+    border: 1px solid #F2F0EA;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    background-color: #f2f0ea;
+}
+ul.product-list li img {
+    max-width: 160px;
+    max-height: 200px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+div.product-list-image {
+    background-color: white;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+div.product-list-info {
+    text-align: center;
+    color: #4f3933;
+    font-weight: bold;
+}
+div.product-list-name {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    color: #2e8bcc;
+}
+div.product-list-name:hover {
+    color: #285281;
+    text-decoration: underline;
+}
+div.product-list-info .btn {
+    margin-left: 20px;
+}
+
+section.product-detail-image {
+    float: left;
+    width: 400px;
+}
+section.product-detail-description {
+    width: auto;
+}
+section.product-detail-image img {
+    max-width: 390px;
+    border: 1px solid #f2f0ea;
+}
+section.product-detail-description h4 {
+    padding: 5px;
+    font-weight: bold;
+    border-bottom: 1px dashed #b8761f;
+}
+section.product-detail-description h4 button {
+    margin-left: 50px;
+}
+section.product-detail-description article {
+    margin-top: 20px;
+}
