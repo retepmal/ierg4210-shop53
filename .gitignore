@@ -12,3 +12,6 @@ ehthumbs.db
 
 # Windows folder config file
 Desktop.ini
+
+# Virtual environment for local development
+local-dev-env/*
