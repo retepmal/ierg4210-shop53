@@ -1,0 +1,108 @@
+<br />
+<div id="add-category" class="row">
+    <div class="col-md-3 col-md-push-7 message"></div>
+    <div class="col-md-7 col-md-pull-3">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">New Category</h3>
+            </div>
+            <div class="panel-body">
+                <form class="form-inline">
+                    <div class="form-group">
+                        <label for="add-category-name">Name</label>
+                        <input type="text" class="form-control" id="add-category-name" name="name" placeholder="" required pattern="^[\w- ']+$" />
+                    </div>
+                    <button type="button" class="btn btn-success">Add</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="edit-category" class="row">
+    <div class="col-md-3 col-md-push-7 message"></div>
+    <div class="col-md-7 col-md-pull-3">
+        <!-- edit category form -->
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">Edit a Category</h3>
+            </div>
+            <div class="panel-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label for="edit-category-id" class="col-sm-2 control-label">Category</label>
+                        <div class="col-sm-10">
+                            <select id="edit-category-id" required class="form-control">
+                                <option value="">Please select a category</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-category-new-name" class="col-sm-2 control-label">New Name</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="edit-category-new-name" name="name" placeholder="" required pattern="^[\w- ']+$" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="button" class="btn btn-primary">Edit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="remove-category" class="row">
+    <div class="col-md-3 col-md-push-7 message"></div>
+    <div class="col-md-7 col-md-pull-3">
+        <!-- remove category form -->
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                <h3 class="panel-title">Remove a Category</h3>
+            </div>
+            <div class="panel-body">
+                <form class="form-inline">
+                    <div class="form-group">
+                        <label for="remove-category-id">Category</label>
+                        <select id="remove-category-id" required class="form-control">
+                            <option value="">Please select a category</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-danger">Remove</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script id="category-list-tpl" type="x-tmpl-mustache">
+    <option value="">Please select a category</option>
+    \{{#categories}}
+    <option value="\{{catid}}">\{{name}}</option>
+    \{{/categories}}
+</script>
+
+<script id="warn-invalid-form-tpl" type="x-tmpl-mustache">
+<p>The following fields are invalid:</p>
+<ul>
+    \{{#fields}}
+    <li>\{{.}}</li>
+    \{{/fields}}
+</ul>
+</script>
+
+<script id="success-message-tpl" type="x-tmpl-mustache">
+    <div class="alert alert-success alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        \{{message}}
+    </div>
+</script>
+
+<script id="error-message-tpl" type="x-tmpl-mustache">
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        \{{{message}}}
+    </div>
+</script>
