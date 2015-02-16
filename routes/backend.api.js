@@ -85,8 +85,8 @@ app.post('/cat/:id/edit', function (req, res) {
         .matches(inputPattern.name);
 
     // reject when any validation error occurs
-    var error = req.validationErrors();
-    if(error) {
+    var errors = req.validationErrors();
+    if(errors) {
         return res.status(400).json({
             'message': errors,
         }).end();

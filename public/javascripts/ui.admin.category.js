@@ -112,7 +112,7 @@
 
         $.ajax({
             type: "POST",
-            url: "/admin/api/cat/" + $("#edit-category-id").val() + "/edit",
+            url: "/admin/api/cat/" + parseInt($("#edit-category-id").val()) + "/edit",
             data: $("#edit-category form").serialize(),
             dataType: "json",
         }).done(function(response) {
@@ -156,7 +156,7 @@
 
         $.ajax({
             type: "POST",
-            url: "/admin/api/cat/" + $("#remove-category-id").val() + "/delete",
+            url: "/admin/api/cat/" + parseInt($("#remove-category-id").val()) + "/delete",
             dataType: "json",
         }).done(function(response) {
             // refesh all selects in page
