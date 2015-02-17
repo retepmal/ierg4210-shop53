@@ -221,13 +221,13 @@ app.post('/prod/add', function (req, res) {
         allowedImageExtension.indexOf(req.files.photo.extension) == -1 ||
         allowedImageMimeType.indexOf(req.files.photo.mimetype) == -1 ) {
             var errors = 'Invalid Photo Upload';
-            return res.redirect(301, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors));
+            return res.redirect(301, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors).replace(/%20/g, '+'));
     }
 
     // reject when any validation error occurs
     var errors = req.validationErrors();
     if(errors) {
-        return res.redirect(301, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors));
+        return res.redirect(301, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors).replace(/%20/g, '+'));
     }
 
     // process photo and insert record to database
@@ -245,7 +245,7 @@ app.post('/prod/add', function (req, res) {
                     var errors = 'Database Error';
                 }
 
-                return res.redirect(301, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors));
+                return res.redirect(301, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors).replace(/%20/g, '+'));
             }
 
             var pid = result.lastInsertId;
@@ -317,13 +317,13 @@ app.post('/prod/:id/edit', function (req, res) {
         ( allowedImageExtension.indexOf(req.files.photo.extension) == -1 ||
           allowedImageMimeType.indexOf(req.files.photo.mimetype) == -1 ) ) {
             var errors = 'Invalid Photo Upload';
-            return res.redirect(301, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors));
+            return res.redirect(301, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors).replace(/%20/g, '+'));
     }
 
     // reject when any validation error occurs
     var errors = req.validationErrors();
     if(errors) {
-        return res.redirect(301, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors));
+        return res.redirect(301, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors).replace(/%20/g, '+'));
     }
 
     // update query callback
@@ -336,13 +336,13 @@ app.post('/prod/:id/edit', function (req, res) {
                 var errors = 'Database Error';
             }
 
-            return res.redirect(301, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors));
+            return res.redirect(301, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors).replace(/%20/g, '+'));
         }
 
         // no rows are deleted
         if (result.affectedRows === 0) {
             var errors = 'Invalid Product ID';
-            return res.redirect(301, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors));
+            return res.redirect(301, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors).replace(/%20/g, '+'));
         }
 
         if( typeof successCall != 'undefined' ) {

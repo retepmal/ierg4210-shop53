@@ -115,8 +115,8 @@
                 $("#product-list").html(rendered);
 
                 // bind click events to product items
-                $("div.panel-body.new-product").click(function() { product.showInsertForm(categorySelected); });
-                $("div.panel-body:not(.new-product)").click(function() { product.showEditForm($(this).attr("data-pid")); });
+                $("#product-list div.panel-body.new-product").click(function() { product.showInsertForm(categorySelected); });
+                $("#product-list div.panel-body:not(.new-product)").click(function() { product.showEditForm($(this).attr("data-pid")); });
 
                 // update location hash
                 uri.removeFragment("catid");
