@@ -9,6 +9,13 @@
         $("#edit-category form select").change(function() { category.selectForEdit(); });
         $("#remove-category form button").click(function() { category.remove(); });
 
+        // disable enter key in all forms
+        $.each(["#add-category form", "#edit-category form", "#remove-category form"], function(k, v) {
+            $(v).submit(function() {
+                return false;
+            });
+        });
+
         // init page with obtaining category list
         category.refreshSelect();
     };
@@ -23,7 +30,7 @@
             // render category list
             var template = $('#category-list-tpl').html();
             var rendered = Mustache.render(template, {categories: response});
-                
+
             // apply to all selects
             $.each(categoryListIds, function(k, v) {
                 $(v).html(rendered);
@@ -32,7 +39,7 @@
         }).error(function(error) {
             // incorrect response
             var template = $('#error-message-tpl').html();
-            var rendered = Mustache.render(template, {message: response.message});
+            var rendered = Mustache.render(template, {message: error.responseJSON.message});
 
             $("#add-category .message").html(rendered);
         });
@@ -53,6 +60,9 @@
             $("#add-category .message").html(rendered);
             return;
         }
+
+        // disable add button
+        $("#add-category button").prop('disabled', true);
 
         $.ajax({
             type: "POST",
@@ -79,6 +89,9 @@
 
             $("#add-category .message").html(rendered);
 
+        }).complete(function() {
+            // enable add button
+            $("#add-category button").prop('disabled', false);
         });
     };
 
@@ -110,6 +123,9 @@
             return;
         }
 
+        // disable add button
+        $("#edit-category button").prop('disabled', false);
+
         $.ajax({
             type: "POST",
             url: "/admin/api/cat/" + parseInt($("#edit-category-id").val()) + "/edit",
@@ -134,8 +150,11 @@
             var rendered = Mustache.render(template, {message: error.responseJSON.message});
 
             $("#edit-category .message").html(rendered);
-        });
 
+        }).complete(function() {
+            // enable add button
+            $("#edit-category button").prop('disabled', false);
+        });
     };
 
     // remove a category
@@ -153,6 +172,9 @@
             $("#remove-category .message").html(rendered);
             return;
         }
+
+        // disable add button
+        $("#remove-category button").prop('disabled', true);
 
         $.ajax({
             type: "POST",
@@ -174,6 +196,10 @@
             var rendered = Mustache.render(template, {message: error.responseJSON.message});
 
             $("#remove-category .message").html(rendered);
+
+        }).complete(function() {
+            // enable add button
+            $("#remove-category button").prop('disabled', false);
         });
     };
 
@@ -194,4 +220,6 @@
     };
 })();
 
-category.init();
+$(function() {
+    category.init();
+});

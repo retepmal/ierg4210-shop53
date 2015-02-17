@@ -1,0 +1,185 @@
+<br />
+<div class="row">
+    <!-- category selection and product list -->
+    <div class="col-md-5" id="product-list-by-category">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                <form class="form-inline">
+                    <div class="form-group">
+                        <label for="product-list-by-category-id">Category</label>
+                        <select id="product-list-by-category-id" required class="form-control">
+                            <option value="">Please select a category</option>
+                        </select>
+                        <button type="button" id="product-list-refresh" class="btn btn-info"><span class="fa fa-refresh"></span></button>
+                    </div>
+                    <button type="button" id="product-list-add" class="btn btn-success pull-right"><span class="fa fa-plus"></span></button>
+                </form>
+                </h3>
+            </div>
+            <div id="product-list"></div>
+        </div>
+    </div>
+
+    <!-- form and inputs -->
+    <div class="col-md-7">
+        <div id="product-list-message"></div>
+        <div id="product-list-forms"></div>
+    </div>
+</div>
+
+<script id="last-operation-result" type="x-tmpl-mustache">
+</script>
+
+<script id="category-list-tpl" type="x-tmpl-mustache">
+    <option value="">Please select a category</option>
+    \{{#categories}}
+    <option value="\{{catid}}">\{{name}}</option>
+    \{{/categories}}
+</script>
+
+<script id="product-list-tpl" type="x-tmpl-mustache">
+    <div class="panel-body new-product">
+        Add Product in this category
+    </div>
+    \{{#products}}
+        <div class="panel-body" data-pid="\{{pid}}">
+            <img src="/images/products/\{{pid}}.\{{image_extension}}" class="img-thumbnail pull-left" />
+            <h4>\{{name}}</h4>
+            <h5>$\{{price}}</h5>
+        </div>
+    \{{/products}}
+</script>
+
+<script id="add-product-form-tpl" type="x-tmpl-mustache">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Add Product</h3>
+        </div>
+        <div class="panel-body">
+            <form class="form-horizontal" action="/admin/api/prod/add" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="add-product-name" class="col-sm-2 control-label">Name</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="add-product-name" name="name" required pattern="^[\w- ']+$" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="add-product-category-id" class="col-sm-2 control-label">Category</label>
+                    <div class="col-sm-10">
+                        <select id="add-product-category-id" name="catid" required class="form-control">
+                            <option value="">Please select a category</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="add-product-price">Price</label>
+                    <div class="col-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-addon">$</span>
+                            <input type="number" class="form-control" id="add-product-price" name="price" step="0.01" min="0.00" value="0" required pattern="^\d+(?:\.\d{1,2})?$" />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="add-product-description">Description</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control" name="description" pattern="^[\w- ',\r\n]+$"></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="add-product-photo">Photo</label>
+                    <div class="col-sm-10">
+                        <input type="file" id="add-product-photo" name="photo" required accept="image/gif,image/jpeg,image/png">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="button" id="add-product-submit" class="btn btn-success">Add</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</script>
+
+<script id="edit-product-form-tpl" type="x-tmpl-mustache">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title">Edit Product</h3>
+        </div>
+        <div class="panel-body">
+            <form class="form-horizontal" action="/admin/api/prod/\{{pid}}/edit" method="POST" enctype="multipart/form-data" data-pid="\{{pid}}">
+                <div class="form-group">
+                    <label for="edit-product-name" class="col-sm-2 control-label">Name</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="edit-product-name" name="name" value="\{{name}}" required pattern="^[\w- ']+$" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="edit-product-category-id" class="col-sm-2 control-label">Category</label>
+                    <div class="col-sm-10">
+                        <select id="edit-product-category-id" name="catid" required class="form-control">
+                            <option value="">Please select a category</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="edit-product-price">Price</label>
+                    <div class="col-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-addon">$</span>
+                            <input type="number" class="form-control" id="edit-product-price" name="price" step="0.01" min="0.00" required pattern="^\d+(?:\.\d{1,2})?$" value="\{{price}}" />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="edit-product-description">Description</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control" name="description" pattern="^[\w- ',\r\n]+$">\{{description}}</textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="edit-product-photo">Photo</label>
+                    <div class="col-sm-5">
+                        <h5>Upload image to replace:</h5>
+                        <input type="file" id="edit-product-photo" name="photo">
+                    </div>
+                    <div class="col-sm-5">
+                        <h5>Current:</h5>
+                        <img src="/images/products/\{{pid}}.\{{image_extension}}" class="img-thumbnail" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="button" id="edit-product-submit" class="btn btn-primary">Update</button>
+                        <button type="button" id="edit-product-delete" class="btn btn-danger pull-right">Delete Product</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</script>
+
+<script id="warn-invalid-form-tpl" type="x-tmpl-mustache">
+<p>The following fields are invalid:</p>
+<ul>
+    \{{#fields}}
+    <li>\{{.}}</li>
+    \{{/fields}}
+</ul>
+</script>
+
+<script id="success-message-tpl" type="x-tmpl-mustache">
+    <div class="alert alert-success alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        \{{message}}
+    </div>
+</script>
+
+<script id="error-message-tpl" type="x-tmpl-mustache">
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        \{{{message}}}
+    </div>
+</script>

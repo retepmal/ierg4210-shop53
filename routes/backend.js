@@ -21,6 +21,10 @@ app.get('/products', function (req, res) {
     res.render('admin-products', {
         layout: 'admin',
         adminSection: 'products',
+        uiScripts: [
+            'URI.js',
+            'ui.admin.product.js',
+        ],
     });
 });
 

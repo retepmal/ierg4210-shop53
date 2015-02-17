@@ -34,7 +34,8 @@
     "express": "^4.11.2",
     "express-handlebars": "^1.1.0",
     "express-validator": "^2.8.0",
-    "handlebars-helper-equal": "^1.0.0"
+    "handlebars-helper-equal": "^1.0.0",
+    "multer": "^0.1.7"
   },
   "devDependencies": {
     "supervisor": "^0.6.0"
