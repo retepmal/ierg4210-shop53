@@ -1,3 +1,8 @@
+var dbhost = process.env.RDS_HOSTNAME,
+    dbuser = process.env.RDS_USERNAME,
+    dbpass = process.env.RDS_PASSWORD,
+    dbname = process.env.RDS_DATABASE;
+
 module.exports = {
-    "dbURI": "mysql://shop53:yXxsBBa2QHdcjh9V@localhost/shop53"
+    "dbURI": "mysql://" + dbuser + ":" + dbuser + "@" + dbhost + "/" + dbname
 };
