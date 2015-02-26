@@ -1,9 +1,11 @@
 var express = require('express'),
     exphbs  = require('express-handlebars'),
 
-    frontEndRouter   = require(__dirname + '/routes/frontend.js'),
-    backEndRouter    = require(__dirname + '/routes/backend.js'),
-    backEndAPIRouter = require(__dirname + '/routes/backend.api.js');
+    frontEndRouter    = require(__dirname + '/routes/frontend.js'),
+    frontEndAPIRouter = require(__dirname + '/routes/frontend.api.js'),
+    cartRouter        = require(__dirname + '/routes/cart.js'),
+    backEndRouter     = require(__dirname + '/routes/backend.js'),
+    backEndAPIRouter  = require(__dirname + '/routes/backend.api.js');
 
 var app = express();
 
@@ -24,6 +26,8 @@ app.use('/fonts', express.static(__dirname + '/public/fonts'));
 
 // include frontend and backend routers
 app.use('/', frontEndRouter);
+app.use('/api', frontEndAPIRouter);
+app.use('/cart', cartRouter);
 app.use('/admin', backEndRouter);
 app.use('/admin/api', backEndAPIRouter);
 

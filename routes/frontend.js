@@ -2,16 +2,16 @@ var express = require('express');
 
 var app = express.Router();
 
-// serve dynamic pages
-app.get('/', function (req, res) {
+// render all frontend pages using index.handlebars,
+// category and product data will be loaded via AJAX request
+function renderFontEnd(req, res) {
     res.render('index');
-});
-app.get('/product/:id', function (req, res) {
-    res.render('product' + req.params.id);
-});
-app.get('/catalog/:name', function (req, res) {
-    // show index page now, to be finished later
-    res.render('index');
-});
+}
+
+// serve multiple pages
+app.get('/', renderFontEnd);
+app.get('/:catid([0-9]+)', renderFontEnd);
+app.get('/:catid([0-9]+)/:pid([0-9]+)', renderFontEnd);
+app.get('/:catid([0-9]+)/page/:page([0-9]+)', renderFontEnd);
 
 module.exports = app;

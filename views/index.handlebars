@@ -1,60 +1,100 @@
-<!-- products -->
-<section class="col-sm-10">
+<div class="row">
+    <section class="col-sm-2" id="page-left"></section>
+    <section class="col-sm-10" id="page-content"></section>
+</div>
+
+<script id="category-list-tpl" type="text/x-handlebars-template">
+    <ul id="category-list" class="nav nav-pills nav-stacked">
+        <li data-catid="0"><a href="/" class="xhr-enable">All</a></li>
+        \{{#each categories}}
+        <li data-catid="\{{catid}}"><a href="/\{{catid}}" class="xhr-enable">\{{name}}</a></li>
+        \{{/each}}
+    </ul>
+</script>
+
+<script id="product-list-tpl" type="text/x-handlebars-template">
     <ol id="navigation-menu" class="breadcrumb">
-        <li><a href="/">Home</a></li>
-        <li class="active">Rilakkuma</li>
+        <li><a href="/" class="xhr-enable">Home</a></li>
+        \{{#if isInCategory}}
+        <li class="active">\{{categoryName}}</li>
+        \{{/if}}
     </ol>
 
     <ul class="product-list">
+        \{{#each products}}
         <li>
             <div class="product-list-image">
-                <a href="/product/1"><img src="/images/products/samples/RLK3167_L.jpg" /></a>
+                <a href="/\{{catid}}/\{{pid}}" class="xhr-enable"><img src="/images/products/\{{image}}" /></a>
             </div>
             <div class="product-list-info">
-                <div class="product-list-name"><a href="/product/1">Prod 1</a></div>
-                $33.3
-                <button type="button" class="btn btn-sm btn-primary" name="addToCart">Add</button>
+                <div class="product-list-name"><a href="/\{{catid}}/\{{pid}}" class="xhr-enable">\{{name}}</a></div>
+                $\{{price}}
+                <button type="button" class="btn btn-sm btn-primary" name="addToCart" data-pid="\{{pid}}">Add</button>
             </div>
         </li>
-        <li>
-            <div class="product-list-image">
-                <a href="/product/2"><img src="/images/products/samples/RLK3169_L.jpg" /></a>
+        \{{/each}}
+        \{{#if isEmptyCategory}}
+            <div class="alert alert-warning alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                Sorry, no product in this category.
             </div>
-            <div class="product-list-info">
-                <div class="product-list-name"><a href="/product/2">Prod 2</a></div>
-                $23.1
-                <button type="button" class="btn btn-sm btn-primary" name="addToCart">Add</button>
-            </div>
-        </li>
-        <li>
-            <div class="product-list-image">
-                <a href="/product/3"><img src="/images/products/samples/RLK4159_L.jpg" /></a>
-            </div>
-            <div class="product-list-info">
-                <div class="product-list-name"><a href="/product/3">Prod 3</a></div>
-                $63.4
-                <button type="button" class="btn btn-sm btn-primary" name="addToCart">Add</button>
-            </div>
-        </li>
-        <li>
-            <div class="product-list-image">
-                <a href="/product/4"><img src="/images/products/samples/RLK4160_L.jpg" />
-            </div>
-            <div class="product-list-info">
-                <div class="product-list-name"><a href="/product/4">Prod 4</a></div>
-                $26.1
-                <button type="button" class="btn btn-sm btn-primary" name="addToCart">Add</button>
-            </div>
-        </li>
-        <li>
-            <div class="product-list-image">
-                <a href="/product/5"><img src="/images/products/samples/RLK4177_L.jpg" />
-            </div>
-            <div class="product-list-info">
-                <div class="product-list-name"><a href="/product/5">Prod 5</a></div>
-                $62.5
-                <button type="button" class="btn btn-sm btn-primary" name="addToCart">Add</button>
-            </div>
-        </li>
+        \{{/if}}
     </ul>
-</section>
+
+    <nav class="text-center">
+        <ul class="pagination">
+            \{{#if isFirstPage}}
+            <li class="disabled"><span aria-hidden="true">&laquo;</span></li>
+            \{{else}}
+            <li>
+                <a href="/\{{catid}}/page/\{{prevPage}}" aria-label="Previous" class="xhr-enable">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            \{{/if}}
+            \{{#each pages}}
+                \{{#if current}}
+                <li class="active"><a href="/\{{catid}}/page/\{{page}}" class="xhr-enable">\{{page}}</a></li>
+                \{{else}}
+                <li><a href="/\{{catid}}/page/\{{page}}" class="xhr-enable">\{{page}}</a></li>
+                \{{/if}}
+            \{{/each}}
+            \{{#if isLastPage}}
+            <li class="disabled"><span aria-hidden="true">&raquo;</span></li>
+            \{{else}}
+            <li>
+                <a href="/\{{catid}}/page/\{{nextPage}}" aria-label="Next" class="xhr-enable">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+            \{{/if}}
+        </ul>
+    </nav>
+</script>
+
+<script id="product-detail-tpl" type="text/x-handlebars-template">
+    <ol id="navigation-menu" class="breadcrumb">
+        <li><a href="/" class="xhr-enable">Home</a></li>
+        <li><a href="/\{{catid}}" class="xhr-enable">\{{categoryName}}</a></li>
+        <li class="active">\{{productName}}</li>
+    </ol>
+
+    <section class="product-detail-image">
+        <img src="/images/products/\{{productImage}}" />
+    </section>
+    <section class="product-detail-description">
+        <h2>\{{productName}}</h2>
+        <h4>
+            $\{{productPrice}}
+            <button type="button" class="btn btn-sm btn-primary" name="addToCart" data-pid="\{{productId}}">Add</button>
+        </h4>
+        <article>\{{productDescription}}</article>
+    </section>
+</script>
+
+<script id="error-message-tpl" type="text/x-handlebars-template">
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        \{{{message}}}
+    </div>
+</script>

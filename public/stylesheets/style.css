@@ -28,14 +28,6 @@
 #cart-detail td {
     vertical-align: middle;
 }
-td.cart-name {
-    color: #2e8bcc;
-    cursor: pointer;
-}
-td.cart-name:hover {
-    color: #285281;
-    text-decoration: underline;
-}
 td.cart-qty .input-group {
     max-width: 100px;
 }
@@ -58,6 +50,7 @@ td.cart-qty input {
 }
 .cart-checkout {
     float: right;
+    display: none;
 }
 
 ol.breadcrumb a {
