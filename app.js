@@ -4,6 +4,7 @@ var express = require('express'),
     frontEndRouter    = require(__dirname + '/routes/frontend.js'),
     frontEndAPIRouter = require(__dirname + '/routes/frontend.api.js'),
     cartRouter        = require(__dirname + '/routes/cart.js'),
+    authRouter        = require(__dirname + '/routes/auth.api.js'),
     backEndRouter     = require(__dirname + '/routes/backend.js'),
     backEndAPIRouter  = require(__dirname + '/routes/backend.api.js');
 
@@ -28,6 +29,7 @@ app.use('/fonts', express.static(__dirname + '/public/fonts'));
 app.use('/', frontEndRouter);
 app.use('/api', frontEndAPIRouter);
 app.use('/cart', cartRouter);
+app.use('/admin', authRouter); // highest priority in /admin/*
 app.use('/admin', backEndRouter);
 app.use('/admin/api', backEndAPIRouter);
 

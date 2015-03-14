@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Rilakkuma Store - Admin Planel</title>
+        <title>Rilakkuma Store - Admin Panel</title>
 
         <link rel="stylesheet" href="/css/bootstrap.min.css">
         <link rel="stylesheet" href="/css/font-awesome.min.css">
@@ -10,15 +10,17 @@
     </head>
     <body>
         <div class="container">
-            <h1>Rilakkuma Store <small>Admin Planel</small></h1>
+            <h1>Rilakkuma Store <small>Admin Panel</small></h1>
 
-            <ul class="nav nav-tabs">
-                <li role="presentation" {{#equal adminSection 'categories'}}class="active"{{/equal}}><a href="/admin/categories">Categories</a></li>
-                <li role="presentation" {{#equal adminSection 'products'}}class="active"{{/equal}}><a href="/admin/products">Products</a></li>
-                <!--
-                    <li role="presentation" class="pull-right"><a href="/admin/signout" class="text-danger">Sign Out</a></li>
-                -->
-            </ul>
+            {{#equal adminSection 'login'}}
+
+            {{else}}
+                <ul class="nav nav-tabs">
+                    <li role="presentation" {{#equal adminSection 'categories'}}class="active"{{/equal}}><a href="/admin/categories">Categories</a></li>
+                    <li role="presentation" {{#equal adminSection 'products'}}class="active"{{/equal}}><a href="/admin/products">Products</a></li>
+                    <li role="presentation" class="pull-right"><a href="/admin/logout" class="text-danger">Sign Out</a></li>
+                </ul>
+            {{/equal}}
 
             {{{body}}}
         </div>

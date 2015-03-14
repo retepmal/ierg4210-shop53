@@ -4,7 +4,7 @@ var app = express.Router();
 
 // expected: /admin
 app.get('/', function (req, res) {
-    res.redirect(301, '/admin/categories');
+    res.redirect(307, '/admin/categories');
 });
 
 // expected: /admin/categories
