@@ -1,4 +1,6 @@
-var express = require('express'),
+var anyDB   = require('any-db'),
+    config  = require('./shop53.config.js'),
+    express = require('express'),
     exphbs  = require('express-handlebars'),
 
     frontEndRouter    = require(__dirname + '/routes/frontend.js'),
@@ -9,6 +11,9 @@ var express = require('express'),
     backEndAPIRouter  = require(__dirname + '/routes/backend.api.js');
 
 var app = express();
+var pool = anyDB.createPool(config.dbURI, {
+    min: 2, max: 20
+});
 
 // set express-handlebars
 app.engine('handlebars', exphbs({
@@ -26,12 +31,12 @@ app.use('/css', express.static(__dirname + '/public/stylesheets'));
 app.use('/fonts', express.static(__dirname + '/public/fonts'));
 
 // include frontend and backend routers
-app.use('/', frontEndRouter);
-app.use('/api', frontEndAPIRouter);
-app.use('/cart', cartRouter);
-app.use('/admin', authRouter); // highest priority in /admin/*
-app.use('/admin', backEndRouter);
-app.use('/admin/api', backEndAPIRouter);
+app.use('/', frontEndRouter(pool));
+app.use('/api', frontEndAPIRouter(pool));
+app.use('/cart', cartRouter(pool));
+app.use('/admin', authRouter(pool)); // highest priority in /admin
+app.use('/admin', backEndRouter(pool));
+app.use('/admin/api', backEndAPIRouter(pool));
 
 // start listening on port 3000
 app.listen(process.env.PORT || 3000, function () {
