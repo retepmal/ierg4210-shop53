@@ -198,7 +198,15 @@
     cart.updateQty = function(pid) {
         var cartItems = readLocalStorage();
 
-        var qty = $("td.cart-qty[data-pid=" + parseInt(pid) + "] input").val();
+        var pid = parseInt(pid);
+        var qty = $("td.cart-qty[data-pid=" + pid + "] input").val();
+
+        $("td.cart-qty[data-pid=" + pid + "] div").removeClass("has-error");
+        if( !/^[0-9]+$/.test(qty) ) {
+            // show error if user not inputting a number
+            $("td.cart-qty[data-pid=" + pid + "] div").addClass("has-error");
+            return;
+        }
 
         if( qty <= 0 ) {
             // remove the related product
