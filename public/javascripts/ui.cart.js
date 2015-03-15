@@ -11,7 +11,7 @@
         $("button.cart-checkout").click(function() {
             cart.checkout();
         });
-    }
+    };
 
     // use try-catch to prevent invalid data in localStorage
     var readLocalStorage = function() {
@@ -40,7 +40,7 @@
         saveLocalStorage(initData);
 
         return initData;
-    };
+    }
 
     var renderCart = function() {
         var cartItems = readLocalStorage();
@@ -135,12 +135,12 @@
                     var pid = $(this).parents("td").attr("data-pid");
                     cart.updateQty(pid);
                 });
-            })
+            });
         } else {
             $("#cart-product-list").html('');
             updateCartAmount(0);
         }
-    };
+    }
 
     // define function to update total amount in page
     var updateCartAmount = function(amount) {

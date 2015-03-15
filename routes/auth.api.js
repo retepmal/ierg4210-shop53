@@ -50,14 +50,14 @@ module.exports = function(pool) {
 
         // reject when any validation error occurs
         var errors = req.validationErrors();
-        if(errors) {
+        if( errors ) {
             return res.status(400).end();
         }
 
         pool.query('SELECT * FROM users WHERE email = ? LIMIT 1',
             [req.body.email],
-            function (error, result) {
-                if(error) {
+            function(error, result) {
+                if( error ) {
                     return res.status(500).end();
                 }
 
@@ -97,7 +97,7 @@ module.exports = function(pool) {
             req.next();
         } else {
             if( req.xhr ) {
-                res.status(401).send('Not Authenticated').end();
+                return res.status(401).send('Not Authenticated').end();
             } else {
                 res.redirect(307, '/admin/login');
             }

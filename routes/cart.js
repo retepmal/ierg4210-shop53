@@ -8,7 +8,7 @@ module.exports = function(pool) {
     app.use(bodyParser.json());
 
     // expected: /cart/products
-    app.post('/products', function (req, res) {
+    app.post('/products', function(req, res) {
         var productIds = [];
         var whereClause = '';
 
@@ -20,27 +20,23 @@ module.exports = function(pool) {
                 if( pid > 0 ) {
                     productIds.push(pid);
                 } else {
-                    return res.status(400).json({
-                        'message': 'Invalid request',
-                    }).end();
+                    // invalid request
+                    return res.status(400).end();
                 }
             }
 
             whereClause = productIds.join(',');
 
         } else {
-            return res.status(400).json({
-                'message': 'Invalid request',
-            }).end();
+            // invalid request
+            return res.status(400).end();
         }
 
         // request products in database
         pool.query('SELECT pid, catid, name, price FROM products WHERE pid in (' + whereClause + ') ORDER BY name ASC',
-            function (error, result) {
-            if(error) {
-                return res.status(500).json({
-                    'message': 'Database Error',
-                }).end();
+            function(error, result) {
+            if( error ) {
+                return res.status(500).end();
             }
 
             res.json(result.rows);

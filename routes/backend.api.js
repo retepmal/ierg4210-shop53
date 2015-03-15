@@ -34,19 +34,17 @@ module.exports = function(pool) {
     };
 
     // expected: /admin/api/cat/list
-    app.get('/cat/list', function (req, res) {
-        pool.query('SELECT * FROM categories ORDER BY name ASC', function (error, result) {
-            if(error) {
-                return res.status(500).json({
-                    'message': 'Database Error',
-                }).end();
+    app.get('/cat/list', function(req, res) {
+        pool.query('SELECT * FROM categories ORDER BY name ASC', function(error, result) {
+            if( error ) {
+                return res.status(500).send('Database Error').end();
             }
             res.json(result.rows);
         })
     });
 
     // expected: /admin/api/cat/add
-    app.post('/cat/add', function (req, res) {
+    app.post('/cat/add', function(req, res) {
         // run input validations
         req.checkBody('name', 'Invalid Category Name')
             .isLength(1, 128)
@@ -54,10 +52,8 @@ module.exports = function(pool) {
 
         // reject when any validation error occurs
         var errors = req.validationErrors();
-        if(errors) {
-            return res.status(400).json({
-                'message': errors,
-            }).end();
+        if( errors ) {
+            return res.status(400).send(errors).end();
         }
 
         // insert record to database
@@ -65,9 +61,7 @@ module.exports = function(pool) {
             [req.body.name],
             function(error, result) {
                 if (error) {
-                    return res.status(500).json({
-                        'message': 'Database Error',
-                    }).end();
+                    return res.status(500).send('Database Error').end();
                 }
 
                 return res.status(200).json({
@@ -78,7 +72,7 @@ module.exports = function(pool) {
     });
 
     // expected: /admin/api/cat/(catid)/edit
-    app.post('/cat/:id/edit', function (req, res) {
+    app.post('/cat/:id/edit', function(req, res) {
         // run input validations
         req.checkParams('id', 'Invalid Category ID')
             .notEmpty()
@@ -89,27 +83,21 @@ module.exports = function(pool) {
 
         // reject when any validation error occurs
         var errors = req.validationErrors();
-        if(errors) {
-            return res.status(400).json({
-                'message': errors,
-            }).end();
+        if( errors ) {
+            return res.status(400).send(errors).end();
         }
 
         // remove record from database
         pool.query('UPDATE categories SET name = ? WHERE catid = ? LIMIT 1', 
             [req.body.name, req.params.id],
             function(error, result) {
-                if(error) {
-                    return res.status(500).json({
-                        'message': 'Database Error',
-                    }).end();
+                if( error ) {
+                    return res.status(500).send('Database Error').end();
                 }
 
                 // no rows are deleted
                 if (result.affectedRows === 0) {
-                    return res.status(400).json({
-                        'message': 'Invalid Category ID',
-                    }).end();
+                    return res.status(400).send('Invalid Category ID').end();
                 }
 
                 return res.status(200).json({
@@ -120,7 +108,7 @@ module.exports = function(pool) {
     });
 
     // expected: /admin/api/cat/(catid)/delete
-    app.post('/cat/:id/delete', function (req, res) {
+    app.post('/cat/:id/delete', function(req, res) {
         // run input validations
         req.checkParams('id', 'Invalid Category ID')
             .notEmpty()
@@ -138,25 +126,19 @@ module.exports = function(pool) {
         pool.query('DELETE FROM categories WHERE catid = ? LIMIT 1', 
             [req.params.id],
             function(error, result) {
-                if(error) {
+                if( error ) {
                     if( error.errno == 1451 ) {
                         // #1451: Cannot delete or update a parent row: a foreign key constraint fails
-                        return res.status(400).json({
-                            'message': 'One or more products are in this category.',
-                        }).end();
+                        return res.status(400).send('One or more products are in this category.').end();
 
                     } else {
-                        return res.status(500).json({
-                            'message': 'Database Error',
-                        }).end();
+                        return res.status(500).send('Database Error').end();
                     }
                 }
 
                 // no rows are deleted
                 if (result.affectedRows === 0) {
-                    return res.status(400).json({
-                        'message': 'Invalid Category ID',
-                    }).end();
+                    return res.status(400).send('Invalid Category ID').end();
                 }
 
                 return res.status(200).json({
@@ -167,7 +149,7 @@ module.exports = function(pool) {
     });
 
     // expected: /admin/api/cat/(catid)/list
-    app.get('/cat/:id/list', function (req, res) {
+    app.get('/cat/:id/list', function(req, res) {
         // run input validations
         req.checkParams('id', 'Invalid Category ID')
             .notEmpty()
@@ -175,26 +157,22 @@ module.exports = function(pool) {
 
         // reject when any validation error occurs
         var errors = req.validationErrors();
-        if(errors) {
-            return res.status(400).json({
-                'message': errors,
-            }).end();
+        if( errors ) {
+            return res.status(400).send(errors).end();
         }
 
         pool.query('SELECT * FROM products WHERE catid = ?',
             [req.params.id],
-            function (error, result) {
-            if(error) {
-                return res.status(500).json({
-                    'message': 'Database Error',
-                }).end();
+            function(error, result) {
+            if( error ) {
+                return res.status(500).send('Database Error').end();
             }
             res.json(result.rows);
         })
     });
 
     // expected: /admin/api/prod/add
-    app.post('/prod/add', function (req, res) {
+    app.post('/prod/add', function(req, res) {
         // run input validations
         req.checkBody('name', 'Invalid Product Name')
             .isLength(1, 128)
@@ -216,13 +194,13 @@ module.exports = function(pool) {
             allowedImageExtension.indexOf(req.files.photo.extension) == -1 ||
             allowedImageMimeType.indexOf(req.files.photo.mimetype) == -1 ) {
                 var errors = 'Invalid Photo Upload';
-                return res.redirect(301, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors).replace(/%20/g, '+'));
+                return res.redirect(303, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors).replace(/%20/g, '+'));
         }
 
         // reject when any validation error occurs
         var errors = req.validationErrors();
-        if(errors) {
-            return res.redirect(301, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors).replace(/%20/g, '+'));
+        if( errors ) {
+            return res.redirect(303, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors).replace(/%20/g, '+'));
         }
 
         // process photo and insert record to database
@@ -232,7 +210,7 @@ module.exports = function(pool) {
         pool.query('INSERT INTO products (catid, name, price, description, image_extension) VALUES (?, ?, ?, ?, ?)', 
             [req.body.catid, req.body.name, req.body.price, description, image_extension],
             function(error, result) {
-                if(error) {
+                if( error ) {
                     if( error.errno == 1452 ) {
                         // #1452: Cannot add or update a child row: a foreign key constraint fails
                         var errors = 'Invalid Category ID';
@@ -240,19 +218,19 @@ module.exports = function(pool) {
                         var errors = 'Database Error';
                     }
 
-                    return res.redirect(301, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors).replace(/%20/g, '+'));
+                    return res.redirect(303, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors).replace(/%20/g, '+'));
                 }
 
                 var pid = result.lastInsertId;
                 fs.rename(req.files.photo.path, __dirname + '/../public/images/products/' + pid + '.' + image_extension);
 
-                res.redirect(301, '/admin/products/#?op=ok.added&catid=' + req.body.catid);
+                res.redirect(303, '/admin/products/#?op=ok.added&catid=' + req.body.catid);
             }
         );
     });
 
     // expected: /admin/api/prod/(pid)
-    app.get('/prod/:id', function (req, res) {
+    app.get('/prod/:id', function(req, res) {
         // run input validations
         req.checkParams('id', 'Invalid Product ID')
             .notEmpty()
@@ -260,24 +238,19 @@ module.exports = function(pool) {
 
         // reject when any validation error occurs
         var errors = req.validationErrors();
-        if(errors) {
-            return res.status(400).json({
-                'message': errors,
-            }).end();
+        if( errors ) {
+            return res.status(400).send(errors).end();
         }
 
         pool.query('SELECT * FROM products WHERE pid = ? LIMIT 1',
             [req.params.id],
-            function (error, result) {
-            if(error) {
-                return res.status(500).json({
-                    'message': 'Database Error',
-                }).end();
+            function(error, result) {
+            if( error ) {
+                return res.status(500).send('Database Error').end();
             }
+
             if( result.rowCount == 0 ) {
-                return res.status(400).json({
-                    'message': 'Invalid Product ID',
-                }).end();
+                return res.status(400).send('Invalid Product ID').end();
 
             } else {
                 res.json(result.rows[0]);
@@ -286,7 +259,7 @@ module.exports = function(pool) {
     });
 
     // expected: /admin/api/prod/(pid)/edit
-    app.post('/prod/:id/edit', function (req, res) {
+    app.post('/prod/:id/edit', function(req, res) {
         // run input validations
         req.checkParams('id', 'Invalid Product ID')
             .notEmpty()
@@ -312,18 +285,18 @@ module.exports = function(pool) {
             ( allowedImageExtension.indexOf(req.files.photo.extension) == -1 ||
               allowedImageMimeType.indexOf(req.files.photo.mimetype) == -1 ) ) {
                 var errors = 'Invalid Photo Upload';
-                return res.redirect(301, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors).replace(/%20/g, '+'));
+                return res.redirect(303, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors).replace(/%20/g, '+'));
         }
 
         // reject when any validation error occurs
         var errors = req.validationErrors();
-        if(errors) {
-            return res.redirect(301, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors).replace(/%20/g, '+'));
+        if( errors ) {
+            return res.redirect(303, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors).replace(/%20/g, '+'));
         }
 
         // update query callback
         var queryCallback = function(error, result, successCall) {
-            if(error) {
+            if( error ) {
                 if( error.errno == 1452 ) {
                     // #1452: Cannot add or update a child row: a foreign key constraint fails
                     var errors = 'Invalid Category ID';
@@ -331,20 +304,20 @@ module.exports = function(pool) {
                     var errors = 'Database Error';
                 }
 
-                return res.redirect(301, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors).replace(/%20/g, '+'));
+                return res.redirect(303, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors).replace(/%20/g, '+'));
             }
 
             // no rows are deleted
             if (result.affectedRows === 0) {
                 var errors = 'Invalid Product ID';
-                return res.redirect(301, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors).replace(/%20/g, '+'));
+                return res.redirect(303, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors).replace(/%20/g, '+'));
             }
 
             if( typeof successCall != 'undefined' ) {
                 successCall();
             }
 
-            res.redirect(301, '/admin/products/#?op=ok.edited&catid=' + req.body.catid);
+            res.redirect(303, '/admin/products/#?op=ok.edited&catid=' + req.body.catid);
         };
 
         // prepare new value
@@ -378,7 +351,7 @@ module.exports = function(pool) {
     });
 
     // expected: /admin/api/prod/(pid)/delete
-    app.post('/prod/:id/delete', function (req, res) {
+    app.post('/prod/:id/delete', function(req, res) {
         // run input validations
         req.checkParams('id', 'Invalid Product ID')
             .notEmpty()
@@ -386,27 +359,21 @@ module.exports = function(pool) {
 
         // reject when any validation error occurs
         var errors = req.validationErrors();
-        if(errors) {
-            return res.status(400).json({
-                'message': errors,
-            }).end();
+        if( errors ) {
+            return res.status(400).send(errors).end();
         }
 
         // remove record from database
         pool.query('DELETE FROM products WHERE pid = ? LIMIT 1', 
             [req.params.id],
             function(error, result) {
-                if(error) {
-                    return res.status(500).json({
-                        'message': 'Database Error',
-                    }).end();
+                if( error ) {
+                    return res.status(500).send('Database Error').end();
                 }
 
                 // no rows are deleted
                 if (result.affectedRows === 0) {
-                    return res.status(400).json({
-                        'message': 'Invalid Product ID',
-                    }).end();
+                    return res.status(400).send('Invalid Product ID').end();
                 }
 
                 // remove all product images in allowed extensions

@@ -49,7 +49,7 @@
 
             $("#product-list-message").html(rendered);
         }
-    };
+    }
 
     var updateCategoryOptions = function(elem, callback) {
         callback = typeof callback !== 'undefined' ? callback : function() {};
@@ -72,11 +72,11 @@
         }).error(function(error) {
             // incorrect response
             var template = $('#error-message-tpl').html();
-            var rendered = Mustache.render(template, {message: error.responseJSON.message});
+            var rendered = Mustache.render(template, {message: error.responseText});
 
             $("#product-list-message").html(rendered);
         });
-    };
+    }
 
     // refresh category list and product list (if valid category selected)
     product.refresh = function() {
@@ -94,7 +94,7 @@
             // refresh product list
             product.list();
         });
-    };
+    }
 
     // list product by category
     product.list = function() {
@@ -126,7 +126,7 @@
             }).error(function(error) {
                 // incorrect response
                 var template = $('#error-message-tpl').html();
-                var rendered = Mustache.render(template, {message: error.responseJSON.message});
+                var rendered = Mustache.render(template, {message: error.responseText});
 
                 $("#product-list-message").html(rendered);
             });
@@ -136,7 +136,7 @@
             $("#product-list").text("");
             $("#product-list-message").text("");
         }
-    };
+    }
 
     // show form for adding new product
     product.showInsertForm = function(catid) {
@@ -160,7 +160,7 @@
         // update location hash
         uri.removeFragment("pid");
         location.assign(uri.toString());
-    };
+    }
 
     // show form for editing current product
     product.showEditForm = function(productId) {
@@ -193,11 +193,11 @@
         }).error(function(error) {
             // incorrect response
             var template = $('#error-message-tpl').html();
-            var rendered = Mustache.render(template, {message: error.responseJSON.message});
+            var rendered = Mustache.render(template, {message: error.responseText});
 
             $("#product-list-message").html(rendered);
         });
-    };
+    }
 
     // insert new product to system
     product.add = function(btn) {
@@ -208,7 +208,7 @@
 
         // use multipart/form-data upload the whole form
         form.submit();
-    };
+    }
 
     // commit change of product information
     product.edit = function(btn) {
@@ -219,7 +219,7 @@
 
         // use multipart/form-data upload the whole form
         form.submit();
-    };
+    }
 
     // delete product from system
     product.delete = function(btn) {
@@ -253,12 +253,12 @@
             }).error(function(error) {
                 // show error message
                 var template = $('#error-message-tpl').html();
-                var rendered = Mustache.render(template, {message: error.responseJSON.message});
+                var rendered = Mustache.render(template, {message: error.responseText});
 
                 $("#product-list-message").html(rendered);
             })
         }
-    };
+    }
 
     // private function: check form validity
     var checkForm = function(form) {
@@ -287,7 +287,7 @@
         } else {
             return true;
         }
-    };
+    }
 })();
 
 $(function() {

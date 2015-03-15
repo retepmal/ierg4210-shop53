@@ -21,19 +21,17 @@ module.exports = function(pool) {
     }));
 
     // expected: /api/categories
-    app.get('/categories', function (req, res) {
-        pool.query('SELECT * FROM categories ORDER BY name ASC', function (error, result) {
-            if(error) {
-                return res.status(500).json({
-                    'message': 'Database Error',
-                }).end();
+    app.get('/categories', function(req, res) {
+        pool.query('SELECT * FROM categories ORDER BY name ASC', function(error, result) {
+            if( error ) {
+                return res.status(500).send('Database Error').end();
             }
             res.json(result.rows);
         });
     });
 
     // expected: /api/category/(catid)/(page)
-    app.get('/category/:id([0-9]+)/:page([0-9]+)', function (req, res) {
+    app.get('/category/:id([0-9]+)/:page([0-9]+)', function(req, res) {
         // run input validations
         req.checkParams('id', 'Invalid Category ID')
             .notEmpty()
@@ -45,10 +43,8 @@ module.exports = function(pool) {
 
         // reject when any validation error occurs
         var errors = req.validationErrors();
-        if(errors) {
-            return res.status(400).json({
-                'message': errors,
-            }).end();
+        if( errors ) {
+            return res.status(400).send(errors).end();
         }
 
         // no where clause if selecting products in all categories
@@ -59,33 +55,31 @@ module.exports = function(pool) {
 
         pool.query('SELECT COUNT(pid) AS count FROM products ' + whereClause,
             [req.params.id],
-            function (error, result) {
-            if(error) {
-                return res.status(500).json({
-                    'message': 'Database Error',
-                }).end();
-            }
-            
-            var productCount = result.rows[0].count;
-            var pageSize = 10;
-
-            pool.query('SELECT pid, catid, name, price, CONCAT(pid, ".", image_extension) AS image FROM products ' + whereClause + ' ORDER BY name ASC LIMIT ?,?',
-                (( req.params.id == 0 ) ?
-                    [(req.params.page - 1) * pageSize, pageSize] :
-                    [req.params.id, (req.params.page - 1) * pageSize, pageSize]
-                ),
-                function (error, result) {
-                if(error) {
-                    return res.status(500).json({
-                        'message': 'Database Error',
-                    }).end();
+            function(error, result) {
+                if( error ) {
+                    return res.status(500).send('Database Error').end();
                 }
-                res.json({
-                    data: result.rows,
-                    pages: Math.ceil(productCount / pageSize),
-                });
-            });
-        });
+
+                var productCount = result.rows[0].count;
+                var pageSize = 10;
+
+                pool.query('SELECT pid, catid, name, price, CONCAT(pid, ".", image_extension) AS image FROM products ' + whereClause + ' ORDER BY name ASC LIMIT ?,?',
+                    (( req.params.id == 0 ) ?
+                        [(req.params.page - 1) * pageSize, pageSize] :
+                        [req.params.id, (req.params.page - 1) * pageSize, pageSize]
+                    ),
+                    function(error, result) {
+                        if( error ) {
+                            return res.status(500).send('Database Error').end();
+                        }
+                        res.json({
+                            data: result.rows,
+                            pages: Math.ceil(productCount / pageSize),
+                        });
+                    }
+                );
+            }
+        );
     });
 
     // expected: /api/product/(pid)
@@ -97,29 +91,24 @@ module.exports = function(pool) {
 
         // reject when any validation error occurs
         var errors = req.validationErrors();
-        if(errors) {
-            return res.status(400).json({
-                'message': errors,
-            }).end();
+        if( errors ) {
+            return res.status(400).send(errors).end();
         }
 
         pool.query('SELECT pid, catid, name, price, description, CONCAT(pid, ".", image_extension) AS image FROM products WHERE pid = ? LIMIT 1',
             [req.params.id],
-            function (error, result) {
-            if(error) {
-                return res.status(500).json({
-                    'message': 'Database Error',
-                }).end();
-            }
-            if( result.rowCount == 0 ) {
-                return res.status(400).json({
-                    'message': 'Invalid Product ID',
-                }).end();
+            function(error, result) {
+                if( error ) {
+                    return res.status(500).send('Database Error').end();
+                }
+                if( result.rowCount == 0 ) {
+                    return res.status(400).send('Invalid Product ID').end();
 
-            } else {
-                res.json(result.rows[0]);
+                } else {
+                    res.json(result.rows[0]);
+                }
             }
-        });
+        );
     });
 
     return app;

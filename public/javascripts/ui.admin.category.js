@@ -18,7 +18,7 @@
 
         // init page with obtaining category list
         category.refreshSelect();
-    };
+    }
 
     // refresh category list (select options) for all select in categoryListIds
     category.refreshSelect = function() {
@@ -39,11 +39,11 @@
         }).error(function(error) {
             // incorrect response
             var template = $('#error-message-tpl').html();
-            var rendered = Mustache.render(template, {message: error.responseJSON.message});
+            var rendered = Mustache.render(template, {message: error.responseText});
 
             $("#add-category .message").html(rendered);
         });
-    };
+    }
 
     // add a category
     category.add = function() {
@@ -85,7 +85,7 @@
         }).error(function(error) {
             // show error message
             var template = $('#error-message-tpl').html();
-            var rendered = Mustache.render(template, {message: error.responseJSON.message});
+            var rendered = Mustache.render(template, {message: error.responseText});
 
             $("#add-category .message").html(rendered);
 
@@ -93,7 +93,7 @@
             // enable add button
             $("#add-category button").prop('disabled', false);
         });
-    };
+    }
 
     // change name field into existing name for editing function
     category.selectForEdit = function() {
@@ -105,7 +105,7 @@
         } else {
             $("#edit-category-new-name").val("");
         }
-    };
+    }
 
     // edit a category
     category.edit = function() {
@@ -147,7 +147,7 @@
         }).error(function(error) {
             // show error message
             var template = $('#error-message-tpl').html();
-            var rendered = Mustache.render(template, {message: error.responseJSON.message});
+            var rendered = Mustache.render(template, {message: error.responseText});
 
             $("#edit-category .message").html(rendered);
 
@@ -155,7 +155,7 @@
             // enable add button
             $("#edit-category button").prop('disabled', false);
         });
-    };
+    }
 
     // remove a category
     category.remove = function() {
@@ -193,7 +193,7 @@
         }).error(function(error) {
             // show error message
             var template = $('#error-message-tpl').html();
-            var rendered = Mustache.render(template, {message: error.responseJSON.message});
+            var rendered = Mustache.render(template, {message: error.responseText});
 
             $("#remove-category .message").html(rendered);
 
@@ -201,7 +201,7 @@
             // enable add button
             $("#remove-category button").prop('disabled', false);
         });
-    };
+    }
 
     // private function: check form validity
     var checkForm = function(form) {
@@ -217,7 +217,7 @@
         });
 
         return invalidFieldName;
-    };
+    }
 })();
 
 $(function() {

@@ -134,7 +134,7 @@
             });
 
         }).error(function(error) {
-            showError(error.responseJSON.message);
+            showError(error.responseText);
         });
     }
 
@@ -175,7 +175,7 @@
             });
 
         }).error(function(error) {
-            showError(error.responseJSON.message);
+            showError(error.responseText);
         });
     }
 
@@ -209,7 +209,7 @@
             });
 
         }).error(function(error) {
-            showError(error.responseJSON.message);
+            showError(error.responseText);
         });
     }
 
@@ -224,7 +224,7 @@
                 message: msg
             })
         );
-    };
+    }
 })();
 
 $(function() {

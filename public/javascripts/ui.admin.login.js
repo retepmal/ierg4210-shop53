@@ -31,7 +31,7 @@
             signin.changePanel("panel-success", "Success!");
 
             // redirect to admin panel default page
-            //location.href = "/admin";
+            location.href = "/admin";
 
         }).error(function(error) {
             signin.changePanel("panel-danger", "Your email or password is incorrect. Please re-try.");
