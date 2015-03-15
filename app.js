@@ -42,6 +42,12 @@ app.use(session({
 
 // csrf middleware, using express-session
 app.use(csrf({ cookie: false }));
+app.use(function(err, req, res, next) {
+    if(err.code !== 'EBADCSRFTOKEN') return next(err)
+
+    // handle CSRF token errors
+    res.status(403).send('Invalid CSRF token').end();
+});
 
 // serve static files
 app.use('/images', express.static(__dirname + '/public/images'));

@@ -60,7 +60,7 @@ module.exports = function(pool) {
         pool.query('INSERT INTO categories (name) VALUES (?)', 
             [req.body.name],
             function(error, result) {
-                if (error) {
+                if( error ) {
                     return res.status(500).send('Database Error').end();
                 }
 
@@ -96,7 +96,7 @@ module.exports = function(pool) {
                 }
 
                 // no rows are deleted
-                if (result.affectedRows === 0) {
+                if( result.affectedRows === 0 ) {
                     return res.status(400).send('Invalid Category ID').end();
                 }
 
@@ -116,10 +116,8 @@ module.exports = function(pool) {
 
         // reject when any validation error occurs
         var errors = req.validationErrors();
-        if(errors) {
-            return res.status(400).json({
-                'message': errors,
-            }).end();
+        if( errors ) {
+            return res.status(400).send(errors).end();
         }
 
         // remove record from database
@@ -308,7 +306,7 @@ module.exports = function(pool) {
             }
 
             // no rows are deleted
-            if (result.affectedRows === 0) {
+            if( result.affectedRows === 0 ) {
                 var errors = 'Invalid Product ID';
                 return res.redirect(303, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors).replace(/%20/g, '+'));
             }
@@ -372,7 +370,7 @@ module.exports = function(pool) {
                 }
 
                 // no rows are deleted
-                if (result.affectedRows === 0) {
+                if( result.affectedRows === 0 ) {
                     return res.status(400).send('Invalid Product ID').end();
                 }
 
