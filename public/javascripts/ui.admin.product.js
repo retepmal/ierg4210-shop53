@@ -268,7 +268,16 @@
         $.each($(form).find("input, select, textarea"), function(k, v) {
             $(v).parent().removeClass("has-error");
 
-            if( !v.checkValidity() ) {
+            var valid = false;
+
+            if( v.type == "textarea" ) {
+                var re = new RegExp($(v).attr("pattern").replace('-', '\\-'));
+                valid = re.test($(v).val());
+            } else {
+                valid = v.checkValidity();
+            }
+
+            if( !valid ) {
                 invalidFields.push($("label[for=" + $(v).attr("id") + "]").text());
                 $(v).parent().addClass("has-error");
             }
