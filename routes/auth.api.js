@@ -1,8 +1,7 @@
 var express = require('express'),
     expressValidator = require('express-validator'),
     bodyParser = require('body-parser'),
-    crypto = require('crypto'),
-    session = require('express-session');
+    crypto = require('crypto');
 
 module.exports = function(pool) {
     var app  = express.Router();
@@ -10,18 +9,6 @@ module.exports = function(pool) {
     app.use(bodyParser.urlencoded({extended:true}));
     // this line must be immediately after express.bodyParser()!
     app.use(expressValidator());
-    app.use(session({
-        name: 'auth',
-        cookie: {
-            path: '/admin',
-            httpOnly: true,
-            maxAge: 3 * 24 * 60 * 60 * 1000, // in milliseconds
-        },
-        secret: process.env.SESSION_SECRET,
-        rolling: false,
-        resave: false,
-        saveUninitialized: false,
-    }));
 
     // expected: /admin/login
     app.get('/login', function (req, res) {
@@ -29,6 +16,7 @@ module.exports = function(pool) {
             layout: 'admin',
             adminSection: 'login',
             uiScripts: ['ui.admin.login.js'],
+            _csrf: req.csrfToken()
         });
     });
 
@@ -78,12 +66,24 @@ module.exports = function(pool) {
 
                     } else {
                         // wrong credential
-                        return res.status(401).end();
+                        req.session.regenerate(function() {
+                            // send new csrf token via response header
+                            res.set('Access-Control-Expose-Headers', 'X-CSRF-Refresh');
+                            res.set('X-CSRF-Refresh', req.csrfToken());
+
+                            return res.status(401).end();
+                        });
                     }
 
                 } else {
                     // no user found
-                    return res.status(401).end();
+                    req.session.regenerate(function() {
+                        // send new csrf token via response header
+                        res.set('Access-Control-Expose-Headers', 'X-CSRF-Refresh');
+                        res.set('X-CSRF-Refresh', req.csrfToken());
+
+                        return res.status(401).end();
+                    });
                 }
             }
         );

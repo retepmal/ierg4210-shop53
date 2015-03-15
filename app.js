@@ -1,7 +1,9 @@
 var anyDB   = require('any-db'),
     config  = require('./shop53.config.js'),
+    csrf    = require('csurf'),
     express = require('express'),
     exphbs  = require('express-handlebars'),
+    session = require('express-session'),
 
     frontEndRouter    = require(__dirname + '/routes/frontend.js'),
     frontEndAPIRouter = require(__dirname + '/routes/frontend.api.js'),
@@ -23,6 +25,23 @@ app.engine('handlebars', exphbs({
     },
 }));
 app.set('view engine', 'handlebars');
+
+// session middleware
+app.use(session({
+    name: 'auth',
+    cookie: {
+        path: '/',
+        httpOnly: true,
+        maxAge: 3 * 24 * 60 * 60 * 1000, // in milliseconds
+    },
+    secret: process.env.SESSION_SECRET,
+    rolling: false,
+    resave: false,
+    saveUninitialized: false,
+}));
+
+// csrf middleware, using express-session
+app.use(csrf({ cookie: false }));
 
 // serve static files
 app.use('/images', express.static(__dirname + '/public/images'));

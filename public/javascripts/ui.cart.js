@@ -135,6 +135,20 @@
                     var pid = $(this).parents("td").attr("data-pid");
                     cart.updateQty(pid);
                 });
+
+            }).error(function(err) {
+                // ask user to refresh current page if request failed
+
+                // compile "cart-refresh-tpl" if needed
+                if( typeof compiledTemplate.cartRefresh == "undefined" ) {
+                    compiledTemplate.cartRefresh = Handlebars.compile($("#cart-refresh-tpl").html());
+                }
+
+                // apply to cart section and bind refresh event
+                $("#cart-summary").html(compiledTemplate.cartRefresh());
+                $("#cart-summary a").click(function(e) {
+                    location.reload();
+                });
             });
         } else {
             $("#cart-product-list").html('');

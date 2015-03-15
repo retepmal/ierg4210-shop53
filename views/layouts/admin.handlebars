@@ -2,6 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
+        <meta name="csrf-token" content="{{_csrf}}">
         <title>Rilakkuma Store - Admin Panel</title>
 
         <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -29,6 +30,7 @@
         <script src="/lib/jquery-2.1.3.min.js"></script>
         <script src="/lib/bootstrap.min.js"></script>
         <script src="/lib/mustache.js"></script>
+        <script src="/lib/ui.csrf.js"></script>
         {{#each uiScripts}}
         <script src="/lib/{{this}}"></script>
         {{/each}}

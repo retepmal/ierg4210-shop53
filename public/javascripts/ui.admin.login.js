@@ -33,8 +33,17 @@
             // redirect to admin panel default page
             location.href = "/admin";
 
-        }).error(function(error) {
-            signin.changePanel("panel-danger", "Your email or password is incorrect. Please re-try.");
+        }).error(function(xhr) {
+            switch( xhr.status ) {
+                case 401:
+                    signin.changePanel("panel-danger", "Your email or password is incorrect. Please re-try.");
+                    break;
+
+                case 403:
+                default:
+                    signin.changePanel("panel-danger", "Please refresh this page and re-try.");
+                    break;
+            }
 
             // enable the form
             $("#signin-panel button, #signin-panel input").prop('disabled', false);

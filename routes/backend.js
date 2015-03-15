@@ -14,6 +14,7 @@ module.exports = function(pool) {
             layout: 'admin',
             adminSection: 'categories',
             uiScripts: ['ui.admin.category.js'],
+            _csrf: req.csrfToken()
         });
     });
 
@@ -26,6 +27,7 @@ module.exports = function(pool) {
                 'URI.js',
                 'ui.admin.product.js',
             ],
+            _csrf: req.csrfToken()
         });
     });
 

@@ -2,6 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
+        <meta name="csrf-token" content="{{_csrf}}">
         <title>Rilakkuma Store</title>
 
         <link rel="stylesheet" href="/css/metro-bootstrap.css">
@@ -54,11 +55,16 @@
             </table>
         </script>
 
+        <script id="cart-refresh-tpl" type="text/x-handlebars-template">
+            <a href="#"><span class="fa fa-refresh"></span> Refresh to view latest cart</a>
+        </script>
+
         <!-- javascript libraries -->
         <script src="/lib/jquery-2.1.3.min.js"></script>
         <script src="/lib/bootstrap.min.js"></script>
         <script src="/lib/handlebars-v3.0.0.js"></script>
         <script src="/lib/URI.js"></script>
+        <script src="/lib/ui.csrf.js"></script>
         <script src="/lib/ui.frontend.js"></script>
         <script src="/lib/ui.cart.js"></script>
     </body>

@@ -6,7 +6,7 @@ module.exports = function(pool) {
     // render all frontend pages using index.handlebars,
     // category and product data will be loaded via AJAX request
     function renderFontEnd(req, res) {
-        res.render('index');
+        res.render('index', {_csrf: req.csrfToken()});
     }
 
     // serve multiple pages
