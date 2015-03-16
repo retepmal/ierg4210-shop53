@@ -6,6 +6,11 @@ module.exports = function(pool) {
     // render all frontend pages using index.handlebars,
     // category and product data will be loaded via AJAX request
     function renderFontEnd(req, res) {
+        var cspRules = "default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'";
+        res.set('Content-Security-Policy', cspRules);
+        res.set('X-Content-Security-Policy', cspRules);
+        res.set('X-WebKit-CSP', cspRules);
+
         res.render('index', {_csrf: req.csrfToken()});
     }
 

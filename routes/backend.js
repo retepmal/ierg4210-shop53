@@ -10,6 +10,11 @@ module.exports = function(pool) {
 
     // expected: /admin/categories
     app.get('/categories', function(req, res) {
+        var cspRules = "default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self'; font-src 'self'; connect-src 'self'";
+        res.set('Content-Security-Policy', cspRules);
+        res.set('X-Content-Security-Policy', cspRules);
+        res.set('X-WebKit-CSP', cspRules);
+
         res.render('admin-categories', {
             layout: 'admin',
             adminSection: 'categories',
@@ -20,6 +25,11 @@ module.exports = function(pool) {
 
     // expected: /admin/products
     app.get('/products', function(req, res) {
+        var cspRules = "default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self'; font-src 'self'; img-src 'self'; connect-src 'self'";
+        res.set('Content-Security-Policy', cspRules);
+        res.set('X-Content-Security-Policy', cspRules);
+        res.set('X-WebKit-CSP', cspRules);
+
         res.render('admin-products', {
             layout: 'admin',
             adminSection: 'products',
