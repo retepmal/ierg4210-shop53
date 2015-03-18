@@ -13,15 +13,16 @@
         <div class="container">
             <h1>Rilakkuma Store <small>Admin Panel</small></h1>
 
-            {{#equal adminSection 'login'}}
+            <ul class="nav nav-tabs">
 
+            {{#equal adminSection 'login'}}
+                <li role="presentation" class="pull-right"><a href="/" class="text-success">Return to Store</a></li>
             {{else}}
-                <ul class="nav nav-tabs">
-                    <li role="presentation" {{#equal adminSection 'categories'}}class="active"{{/equal}}><a href="/admin/categories">Categories</a></li>
-                    <li role="presentation" {{#equal adminSection 'products'}}class="active"{{/equal}}><a href="/admin/products">Products</a></li>
-                    <li role="presentation" class="pull-right"><a href="/admin/logout" class="text-danger">Sign Out</a></li>
-                </ul>
+                <li role="presentation" {{#equal adminSection 'categories'}}class="active"{{/equal}}><a href="/admin/categories">Categories</a></li>
+                <li role="presentation" {{#equal adminSection 'products'}}class="active"{{/equal}}><a href="/admin/products">Products</a></li>
+                <li role="presentation" class="pull-right"><a href="/admin/logout" class="text-danger">Sign Out</a></li>
             {{/equal}}
+            </ul>
 
             {{{body}}}
         </div>
