@@ -10,8 +10,21 @@ module.exports = function(pool) {
     // this line must be immediately after express.bodyParser()!
     app.use(expressValidator());
 
+    /*
+     * middleware to enforce the admin panel in HTTPS
+     */
+    app.use('/', function(req, res) {
+        var schema = req.headers['x-forwarded-proto'];
+
+        if( process.env.NODE_ENV == 'production' && schema != 'https' ) {
+            res.redirect(303, 'https://' + req.headers.host + '/admin' + req.url);
+        } else {
+            req.next();
+        }
+    });
+
     // expected: /admin/login
-    app.get('/login', function (req, res) {
+    app.get('/login', function(req, res) {
         var cspRules = "default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self'; font-src 'self'; connect-src 'self'";
         res.set('Content-Security-Policy', cspRules);
         res.set('X-Content-Security-Policy', cspRules);
@@ -26,7 +39,7 @@ module.exports = function(pool) {
     });
 
     // expected: /admin/logout
-    app.get('/logout', function (req, res) {
+    app.get('/logout', function(req, res) {
         if( req.session ) {
             req.session.destroy();
         }
@@ -34,7 +47,7 @@ module.exports = function(pool) {
     });
 
     // expected: /admin/api/login
-    app.post('/api/login', function (req, res) {
+    app.post('/api/login', function(req, res) {
         // run input validations
         req.checkBody('email')
             .isEmail();
@@ -97,7 +110,7 @@ module.exports = function(pool) {
     /*
      * middleware to validate the token
      */
-    app.use('/', function (req, res) {
+    app.use('/', function(req, res) {
         if( req.session && req.session.authenticated && req.session.is_admin ) {
             req.next();
         } else {
