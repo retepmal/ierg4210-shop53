@@ -66,7 +66,7 @@
     // parse anchor link if it can be loaded via AJAX request
     // otherwise redirect user using location.href
     frontend.clickLink = function(anchor) {
-        var targetUrl = $(anchor).attr("href");
+        var targetUrl = xssFilters.uriInHTMLData($(anchor).attr("href"));
 
         if( frontend.loadPage(targetUrl) ) {
             history.pushState({ path: targetUrl }, "", targetUrl);
@@ -82,12 +82,12 @@
 
         $.ajax({
             type: "GET",
-            url: "/api/category/" + catid + "/" + currentPage,
+            url: "/api/category/" + xssFilters.uriPathInUnQuotedAttr(catid) + "/" + xssFilters.uriPathInUnQuotedAttr(currentPage),
             dataType: "json",
         }).done(function(response) {
             var tplVars = {
                 catid: catid,
-                pages: [],
+                pages: []
             };
 
             // compile "product-list-tpl" if needed
@@ -97,7 +97,7 @@
 
             // update active category in left side list
             $("ul#category-list li").removeClass("active");
-            $("ul#category-list li[data-catid=" + parseInt(catid) + "]").addClass("active");
+            $("ul#category-list li[data-catid=" + xssFilters.inUnQuotedAttr(catid) + "]").addClass("active");
 
             // prepare pagination variables
             tplVars.isFirstPage = ( currentPage == 1 );
@@ -109,7 +109,7 @@
                 tplVars.pages.push({
                     page: i,
                     catid: catid,
-                    current: (i == currentPage),
+                    current: (i == currentPage)
                 });
             }
 
@@ -144,7 +144,7 @@
 
         $.ajax({
             type: "GET",
-            url: "/api/product/" + pid,
+            url: "/api/product/" + xssFilters.uriPathInUnQuotedAttr(pid),
             dataType: "json",
         }).done(function(response) {
             // compile "product-detail-tpl" if needed
@@ -159,7 +159,7 @@
                 productName: response.name,
                 productImage: response.image,
                 productPrice: response.price,
-                productDescription: response.description,
+                productDescription: response.description
             };
 
             // render product list and show in content section

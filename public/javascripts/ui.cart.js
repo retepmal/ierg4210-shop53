@@ -70,7 +70,7 @@
                     productInfo[v.pid] = {
                         name: v.name,
                         catid: v.catid,
-                        price: v.price,
+                        price: v.price
                     };
                 });
 
@@ -85,7 +85,7 @@
                             name: productInfo[v.pid].name,
                             catid: productInfo[v.pid].catid,
                             price: productInfo[v.pid].price,
-                            qty: v.qty,
+                            qty: v.qty
                         });
                         processedCart.push(v);
 
@@ -184,7 +184,7 @@
         if( !existsInCart) {
             cartItems.push({
                 pid: pid,
-                qty: 1,
+                qty: 1
             });
         }
 
