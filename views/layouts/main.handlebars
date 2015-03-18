@@ -30,6 +30,7 @@
         <div id="page-body" class="container">{{{body}}}</div>
 
         <script id="cart-detail-tpl" type="text/x-handlebars-template">
+            {{!-- before context-parser-handlebars:
             <table class="table">
                 \{{#each products}}
                 <tr>
@@ -53,6 +54,31 @@
                 </tr>
                 \{{/each}}
             </table>
+            --}}
+
+            <table class="table">
+                \{{#each products}}
+                <tr>
+                    <td class="cart-name"><a href="/\{{{yavd (yu catid)}}}/\{{{yavd (yu pid)}}}" class="xhr-enable">\{{{yd name}}}</a></td>
+                    <td class="cart-qty" data-pid="\{{{yavd pid}}}">
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-sm cart-minus" data-type="minus">
+                                    <span class="fa fa-minus"></span>
+                                </button>
+                            </span>
+                            <input type="text" class="form-control" value="\{{{yavd qty}}}" min="0">
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-sm cart-plus" data-type="plus">
+                                    <span class="fa fa-plus"></span>
+                                </button>
+                            </span>
+                        </div>
+                    </td>
+                    <td><span class="fa fa-at"></span>$\{{{yd price}}}</td>
+                </tr>
+                \{{/each}}
+            </table>
         </script>
 
         <script id="cart-refresh-tpl" type="text/x-handlebars-template">
@@ -63,6 +89,8 @@
         <script src="/lib/jquery-2.1.3.min.js"></script>
         <script src="/lib/bootstrap.min.js"></script>
         <script src="/lib/handlebars-v3.0.0.js"></script>
+        <script src="/lib/xss-filters.1.0.6.min.js"></script>
+        <script src="/lib/secure-handlebars-helpers.min.1.0.4.js"></script>
         <script src="/lib/URI.js"></script>
         <script src="/lib/ui.csrf.js"></script>
         <script src="/lib/ui.frontend.js"></script>
