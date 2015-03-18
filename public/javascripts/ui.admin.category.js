@@ -2,6 +2,7 @@
     var category = window.category = {};
 
     var categoryListIds = ['#edit-category-id', '#remove-category-id'];
+    var compiledTemplate = {};
     category.init = function() {
         // bind click event for category page buttons
         $("#add-category form button").click(function() { category.add(); });
@@ -27,9 +28,13 @@
             url: "/admin/api/cat/list",
             dataType: "json",
         }).done(function(response) {
+            // compile "category-list-tpl" if needed
+            if( typeof compiledTemplate.categoryList == "undefined" ) {
+                compiledTemplate.categoryList = Handlebars.compile($("#category-list-tpl").html());
+            }
+
             // render category list
-            var template = $('#category-list-tpl').html();
-            var rendered = Mustache.render(template, {categories: response});
+            var rendered = compiledTemplate.categoryList({categories: response});
 
             // apply to all selects
             $.each(categoryListIds, function(k, v) {
@@ -37,10 +42,13 @@
             });
 
         }).error(function(error) {
-            // incorrect response
-            var template = $('#error-message-tpl').html();
-            var rendered = Mustache.render(template, {message: error.responseText});
+            // compile "error-message-tpl" if needed
+            if( typeof compiledTemplate.errorMessage == "undefined" ) {
+                compiledTemplate.errorMessage = Handlebars.compile($("#error-message-tpl").html());
+            }
 
+            // incorrect response
+            var rendered = compiledTemplate.errorMessage({message: error.responseText});
             $("#add-category .message").html(rendered);
         });
     }
@@ -51,11 +59,17 @@
 
         // show error if there is any invalid fields
         if( invalidFields.length > 0 ) {
-            var template = $('#warn-invalid-form-tpl').html();
-            var message = Mustache.render(template, {fields: invalidFields});
+            // compile "warn-invalid-form-tpl" if needed
+            if( typeof compiledTemplate.warnInvalidForm == "undefined" ) {
+                compiledTemplate.warnInvalidForm = Handlebars.compile($("#warn-invalid-form-tpl").html());
+            }
+            // compile "error-message-tpl" if needed
+            if( typeof compiledTemplate.errorMessage == "undefined" ) {
+                compiledTemplate.errorMessage = Handlebars.compile($("#error-message-tpl").html());
+            }
 
-            var template = $('#error-message-tpl').html();
-            var rendered = Mustache.render(template, {message: message});
+            var message = compiledTemplate.warnInvalidForm({fields: invalidFields});
+            var rendered = compiledTemplate.errorMessage({message: message});
 
             $("#add-category .message").html(rendered);
             return;
@@ -76,17 +90,23 @@
             // refesh all selects in page
             category.refreshSelect();
 
-            // show success message
-            var template = $('#success-message-tpl').html();
-            var rendered = Mustache.render(template, {message: "Success! Category added."});
+            // compile "success-message-tpl" if needed
+            if( typeof compiledTemplate.successMessage == "undefined" ) {
+                compiledTemplate.successMessage = Handlebars.compile($("#success-message-tpl").html());
+            }
 
+            // show success message
+            var rendered = compiledTemplate.successMessage({message: "Success! Category added."});
             $("#add-category .message").html(rendered);
 
         }).error(function(error) {
-            // show error message
-            var template = $('#error-message-tpl').html();
-            var rendered = Mustache.render(template, {message: error.responseText});
+            // compile "error-message-tpl" if needed
+            if( typeof compiledTemplate.errorMessage == "undefined" ) {
+                compiledTemplate.errorMessage = Handlebars.compile($("#error-message-tpl").html());
+            }
 
+            // incorrect response
+            var rendered = compiledTemplate.errorMessage({message: error.responseText});
             $("#add-category .message").html(rendered);
 
         }).complete(function() {
@@ -113,11 +133,17 @@
 
         // show error if there is any invalid fields
         if( invalidFields.length > 0 ) {
-            var template = $('#warn-invalid-form-tpl').html();
-            var message = Mustache.render(template, {fields: invalidFields});
+            // compile "warn-invalid-form-tpl" if needed
+            if( typeof compiledTemplate.warnInvalidForm == "undefined" ) {
+                compiledTemplate.warnInvalidForm = Handlebars.compile($("#warn-invalid-form-tpl").html());
+            }
+            // compile "error-message-tpl" if needed
+            if( typeof compiledTemplate.errorMessage == "undefined" ) {
+                compiledTemplate.errorMessage = Handlebars.compile($("#error-message-tpl").html());
+            }
 
-            var template = $('#error-message-tpl').html();
-            var rendered = Mustache.render(template, {message: message});
+            var message = compiledTemplate.warnInvalidForm({fields: invalidFields});
+            var rendered = compiledTemplate.errorMessage({message: message});
 
             $("#edit-category .message").html(rendered);
             return;
@@ -138,17 +164,23 @@
             // refesh all selects in page
             category.refreshSelect();
 
-            // show success message
-            var template = $('#success-message-tpl').html();
-            var rendered = Mustache.render(template, {message: "Success! Category edited."});
+            // compile "success-message-tpl" if needed
+            if( typeof compiledTemplate.successMessage == "undefined" ) {
+                compiledTemplate.successMessage = Handlebars.compile($("#success-message-tpl").html());
+            }
 
+            // show success message
+            var rendered = compiledTemplate.successMessage({message: "Success! Category edited."});
             $("#edit-category .message").html(rendered);
 
         }).error(function(error) {
-            // show error message
-            var template = $('#error-message-tpl').html();
-            var rendered = Mustache.render(template, {message: error.responseText});
+            // compile "error-message-tpl" if needed
+            if( typeof compiledTemplate.errorMessage == "undefined" ) {
+                compiledTemplate.errorMessage = Handlebars.compile($("#error-message-tpl").html());
+            }
 
+            // show error message
+            var rendered = compiledTemplate.errorMessage({message: error.responseText});
             $("#edit-category .message").html(rendered);
 
         }).complete(function() {
@@ -163,11 +195,17 @@
 
         // show error if there is any invalid fields
         if( invalidFields.length > 0 ) {
-            var template = $('#warn-invalid-form-tpl').html();
-            var message = Mustache.render(template, {fields: invalidFields});
+            // compile "warn-invalid-form-tpl" if needed
+            if( typeof compiledTemplate.warnInvalidForm == "undefined" ) {
+                compiledTemplate.warnInvalidForm = Handlebars.compile($("#warn-invalid-form-tpl").html());
+            }
+            // compile "error-message-tpl" if needed
+            if( typeof compiledTemplate.errorMessage == "undefined" ) {
+                compiledTemplate.errorMessage = Handlebars.compile($("#error-message-tpl").html());
+            }
 
-            var template = $('#error-message-tpl').html();
-            var rendered = Mustache.render(template, {message: message});
+            var message = compiledTemplate.warnInvalidForm({fields: invalidFields});
+            var rendered = compiledTemplate.errorMessage({message: message});
 
             $("#remove-category .message").html(rendered);
             return;
@@ -184,17 +222,23 @@
             // refesh all selects in page
             category.refreshSelect();
 
-            // show success message
-            var template = $('#success-message-tpl').html();
-            var rendered = Mustache.render(template, {message: "Success! Category removed."});
+            // compile "success-message-tpl" if needed
+            if( typeof compiledTemplate.successMessage == "undefined" ) {
+                compiledTemplate.successMessage = Handlebars.compile($("#success-message-tpl").html());
+            }
 
+            // show success message
+            var rendered = compiledTemplate.successMessage({message: "Success! Category removed."});
             $("#remove-category .message").html(rendered);
 
         }).error(function(error) {
-            // show error message
-            var template = $('#error-message-tpl').html();
-            var rendered = Mustache.render(template, {message: error.responseText});
+            // compile "error-message-tpl" if needed
+            if( typeof compiledTemplate.errorMessage == "undefined" ) {
+                compiledTemplate.errorMessage = Handlebars.compile($("#error-message-tpl").html());
+            }
 
+            // show error message
+            var rendered = compiledTemplate.errorMessage({message: error.responseText});
             $("#remove-category .message").html(rendered);
 
         }).complete(function() {

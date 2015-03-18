@@ -28,17 +28,14 @@
     </div>
 </div>
 
-<script id="last-operation-result" type="x-tmpl-mustache">
-</script>
-
-<script id="category-list-tpl" type="x-tmpl-mustache">
+<script id="category-list-tpl" type="text/x-handlebars-template">
     <option value="">Please select a category</option>
     \{{#categories}}
     <option value="\{{catid}}">\{{name}}</option>
     \{{/categories}}
 </script>
 
-<script id="product-list-tpl" type="x-tmpl-mustache">
+<script id="product-list-tpl" type="text/x-handlebars-template">
     <div class="panel-body new-product">
         Add Product in this category
     </div>
@@ -51,7 +48,7 @@
     \{{/products}}
 </script>
 
-<script id="add-product-form-tpl" type="x-tmpl-mustache">
+<script id="add-product-form-tpl" type="text/x-handlebars-template">
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Add Product</h3>
@@ -103,7 +100,7 @@
     </div>
 </script>
 
-<script id="edit-product-form-tpl" type="x-tmpl-mustache">
+<script id="edit-product-form-tpl" type="text/x-handlebars-template">
     <div class="panel panel-info">
         <div class="panel-heading">
             <h3 class="panel-title">Edit Product</h3>
@@ -161,7 +158,7 @@
     </div>
 </script>
 
-<script id="warn-invalid-form-tpl" type="x-tmpl-mustache">
+<script id="warn-invalid-form-tpl" type="text/x-handlebars-template">
 <p>The following fields are invalid:</p>
 <ul>
     \{{#fields}}
@@ -170,14 +167,14 @@
 </ul>
 </script>
 
-<script id="success-message-tpl" type="x-tmpl-mustache">
+<script id="success-message-tpl" type="text/x-handlebars-template">
     <div class="alert alert-success alert-dismissible" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         \{{message}}
     </div>
 </script>
 
-<script id="error-message-tpl" type="x-tmpl-mustache">
+<script id="error-message-tpl" type="text/x-handlebars-template">
     <div class="alert alert-danger alert-dismissible" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         \{{{message}}}

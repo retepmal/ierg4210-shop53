@@ -2,6 +2,7 @@
     var product = window.product = {};
 
     var uri = new URI();
+    var compiledTemplate = {};
     product.init = function() {
         // bind input and form events
         $("#product-list-by-category-id").change(function() { product.list(); });
@@ -44,9 +45,11 @@
                     break;
             }
 
-            var template = $(tpl).html();
-            var rendered = Mustache.render(template, {message: msg});
+            if( typeof compiledTemplate[tpl] == "undefined" ) {
+                compiledTemplate[tpl] = Handlebars.compile($(tpl).html());
+            }
 
+            var rendered = compiledTemplate[tpl]({message: msg});
             $("#product-list-message").html(rendered);
         }
     }
@@ -59,9 +62,13 @@
             url: "/admin/api/cat/list",
             dataType: "json",
         }).done(function(response) {
+            // compile "category-list-tpl" if needed
+            if( typeof compiledTemplate.categoryList == "undefined" ) {
+                compiledTemplate.categoryList = Handlebars.compile($("#category-list-tpl").html());
+            }
+
             // render category list
-            var template = $('#category-list-tpl').html();
-            var rendered = Mustache.render(template, {categories: response});
+            var rendered = compiledTemplate.categoryList({categories: response});
 
             // apply options to select
             $(elem).html(rendered);
@@ -70,10 +77,13 @@
             callback();
 
         }).error(function(error) {
-            // incorrect response
-            var template = $('#error-message-tpl').html();
-            var rendered = Mustache.render(template, {message: error.responseText});
+            // compile "error-message-tpl" if needed
+            if( typeof compiledTemplate.errorMessage == "undefined" ) {
+                compiledTemplate.errorMessage = Handlebars.compile($("#error-message-tpl").html());
+            }
 
+            // incorrect response
+            var rendered = compiledTemplate.errorMessage({message: error.responseText});
             $("#product-list-message").html(rendered);
         });
     }
@@ -107,9 +117,13 @@
                 url: "/admin/api/cat/" + parseInt(categorySelected) + "/list",
                 dataType: "json",
             }).done(function(response) {
+                // compile "product-list-tpl" if needed
+                if( typeof compiledTemplate.productList == "undefined" ) {
+                    compiledTemplate.productList = Handlebars.compile($("#product-list-tpl").html());
+                }
+
                 // render category list
-                var template = $('#product-list-tpl').html();
-                var rendered = Mustache.render(template, {products: response});
+                var rendered = compiledTemplate.productList({products: response});
 
                 // apply options to select
                 $("#product-list").html(rendered);
@@ -124,10 +138,13 @@
                 location.assign(uri.toString());
 
             }).error(function(error) {
-                // incorrect response
-                var template = $('#error-message-tpl').html();
-                var rendered = Mustache.render(template, {message: error.responseText});
+                // compile "error-message-tpl" if needed
+                if( typeof compiledTemplate.errorMessage == "undefined" ) {
+                    compiledTemplate.errorMessage = Handlebars.compile($("#error-message-tpl").html());
+                }
 
+                // incorrect response
+                var rendered = compiledTemplate.errorMessage({message: error.responseText});
                 $("#product-list-message").html(rendered);
             });
 
@@ -140,9 +157,12 @@
 
     // show form for adding new product
     product.showInsertForm = function(catid) {
-        var template = $('#add-product-form-tpl').html();
-        var rendered = Mustache.render(template);
+        // compile "add-product-form-tpl" if needed
+        if( typeof compiledTemplate.productAddForm == "undefined" ) {
+            compiledTemplate.productAddForm = Handlebars.compile($("#add-product-form-tpl").html());
+        }
 
+        var rendered = compiledTemplate.productAddForm();
         $("#product-list-forms").html(rendered);
 
         // select current category
@@ -169,10 +189,13 @@
             url: "/admin/api/prod/" + parseInt(productId),
             dataType: "json",
         }).done(function(response) {
-            // render product edit form
-            var template = $('#edit-product-form-tpl').html();
-            var rendered = Mustache.render(template, response);
+            // compile "edit-product-form-tpl" if needed
+            if( typeof compiledTemplate.productEditForm == "undefined" ) {
+                compiledTemplate.productEditForm = Handlebars.compile($("#edit-product-form-tpl").html());
+            }
 
+            // render product edit form
+            var rendered = compiledTemplate.productEditForm(response);
             $("#product-list-forms").html(rendered);
 
             // select product's category
@@ -191,10 +214,13 @@
             location.assign(uri.toString());
 
         }).error(function(error) {
-            // incorrect response
-            var template = $('#error-message-tpl').html();
-            var rendered = Mustache.render(template, {message: error.responseText});
+            // compile "error-message-tpl" if needed
+            if( typeof compiledTemplate.errorMessage == "undefined" ) {
+                compiledTemplate.errorMessage = Handlebars.compile($("#error-message-tpl").html());
+            }
 
+            // incorrect response
+            var rendered = compiledTemplate.errorMessage({message: error.responseText});
             $("#product-list-message").html(rendered);
         });
     }
@@ -239,10 +265,13 @@
                 // refesh product list in current category
                 product.refresh();
 
-                // show success message
-                var template = $('#success-message-tpl').html();
-                var rendered = Mustache.render(template, {message: "Success! Product removed."});
+                // compile "success-message-tpl" if needed
+                if( typeof compiledTemplate.successMessage == "undefined" ) {
+                    compiledTemplate.successMessage = Handlebars.compile($("#success-message-tpl").html());
+                }
 
+                // show error message
+                var rendered = compiledTemplate.successMessage({message: "Success! Product removed."});
                 $("#product-list-message").html(rendered);
                 $("#product-list-forms").text("");
 
@@ -251,10 +280,13 @@
                 location.assign(uri.toString());
 
             }).error(function(error) {
-                // show error message
-                var template = $('#error-message-tpl').html();
-                var rendered = Mustache.render(template, {message: error.responseText});
+                // compile "error-message-tpl" if needed
+                if( typeof compiledTemplate.errorMessage == "undefined" ) {
+                    compiledTemplate.errorMessage = Handlebars.compile($("#error-message-tpl").html());
+                }
 
+                // show error message
+                var rendered = compiledTemplate.errorMessage({message: error.responseText});
                 $("#product-list-message").html(rendered);
             })
         }
@@ -285,12 +317,17 @@
 
         // show error if there is any invalid fields
         if( invalidFields.length > 0 ) {
-            var template = $('#warn-invalid-form-tpl').html();
-            var message = Mustache.render(template, {fields: invalidFields});
+            // compile "warn-invalid-form-tpl" if needed
+            if( typeof compiledTemplate.warnInvalidForm == "undefined" ) {
+                compiledTemplate.warnInvalidForm = Handlebars.compile($("#warn-invalid-form-tpl").html());
+            }
+            // compile "error-message-tpl" if needed
+            if( typeof compiledTemplate.errorMessage == "undefined" ) {
+                compiledTemplate.errorMessage = Handlebars.compile($("#error-message-tpl").html());
+            }
 
-            var template = $('#error-message-tpl').html();
-            var rendered = Mustache.render(template, {message: message});
-
+            var message = compiledTemplate.warnInvalidForm({fields: invalidFields});
+            var rendered = compiledTemplate.errorMessage({message: message});
             $("#product-list-message").html(rendered);
             return false;
         } else {
