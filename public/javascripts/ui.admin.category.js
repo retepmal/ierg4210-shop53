@@ -117,10 +117,10 @@
 
     // change name field into existing name for editing function
     category.selectForEdit = function() {
-        var currentCartId = $("#edit-category-id").val();
-        if( parseInt(currentCartId) > 0 ) {
+        var currentCartId = parseInt($("#edit-category-id").val());
+        if( currentCartId > 0 ) {
             $("#edit-category-new-name").val(
-                $("#edit-category-id [value=" + currentCartId + "]").text()
+                $("#edit-category-id [value=" + xssFilters.inUnQuotedAttr(currentCartId) + "]").text()
             );
         } else {
             $("#edit-category-new-name").val("");
@@ -152,9 +152,10 @@
         // disable add button
         $("#edit-category button").prop('disabled', false);
 
+        var categoryId = parseInt($("#edit-category-id").val());
         $.ajax({
             type: "POST",
-            url: "/admin/api/cat/" + parseInt($("#edit-category-id").val()) + "/edit",
+            url: "/admin/api/cat/" + xssFilters.uriPathInUnQuotedAttr(categoryId) + "/edit",
             data: $("#edit-category form").serialize(),
             dataType: "json",
         }).done(function(response) {
@@ -214,9 +215,10 @@
         // disable add button
         $("#remove-category button").prop('disabled', true);
 
+        var categoryId = parseInt($("#remove-category-id").val());
         $.ajax({
             type: "POST",
-            url: "/admin/api/cat/" + parseInt($("#remove-category-id").val()) + "/delete",
+            url: "/admin/api/cat/" + xssFilters.uriPathInUnQuotedAttr(categoryId) + "/delete",
             dataType: "json",
         }).done(function(response) {
             // refesh all selects in page

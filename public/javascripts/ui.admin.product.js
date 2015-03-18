@@ -17,7 +17,7 @@
             if( typeof state.catid != 'undefined' ) {
                 var catid = parseInt(state.catid);
                 $("#product-list-by-category-id option").prop("selected", false);
-                $("#product-list-by-category-id option[value=" + catid + "]").prop("selected", true);
+                $("#product-list-by-category-id option[value=" + xssFilters.inUnQuotedAttr(catid) + "]").prop("selected", true);
                 product.list();
             }
 
@@ -90,15 +90,15 @@
 
     // refresh category list and product list (if valid category selected)
     product.refresh = function() {
-        var categorySelected = $("#product-list-by-category-id").val();
+        var categorySelected = parseInt($("#product-list-by-category-id").val());
 
         // refresh category list
         updateCategoryOptions($("#product-list-by-category-id"), function() {
             // select previous category
             $("#product-list-by-category-id option").prop("selected", false);
 
-            if( parseInt(categorySelected) > 0 ) {
-                $("#product-list-by-category-id option[value=" + categorySelected + "]").prop("selected", true);
+            if( categorySelected > 0 ) {
+                $("#product-list-by-category-id option[value=" + xssFilters.inUnQuotedAttr(categorySelected) + "]").prop("selected", true);
             }
 
             // refresh product list
@@ -108,13 +108,13 @@
 
     // list product by category
     product.list = function() {
-        var categorySelected = $("#product-list-by-category-id").val();
+        var categorySelected = parseInt($("#product-list-by-category-id").val());
 
-        if( parseInt(categorySelected) > 0 ) {
+        if( categorySelected > 0 ) {
             // obtain product list by selected category
             $.ajax({
                 type: "GET",
-                url: "/admin/api/cat/" + parseInt(categorySelected) + "/list",
+                url: "/admin/api/cat/" + xssFilters.uriPathInUnQuotedAttr(categorySelected) + "/list",
                 dataType: "json",
             }).done(function(response) {
                 // compile "product-list-tpl" if needed
@@ -169,8 +169,9 @@
         updateCategoryOptions($("#add-product-category-id"), function() {
             $("#add-product-category-id option").prop("selected", false);
 
-            if( parseInt(catid) > 0 ) {
-                $("#add-product-category-id option[value=" + catid + "]").prop("selected", true);
+            catid = parseInt(catid);
+            if( catid > 0 ) {
+                $("#add-product-category-id option[value=" + xssFilters.inUnQuotedAttr(catid) + "]").prop("selected", true);
             }
         });
 
@@ -184,9 +185,11 @@
 
     // show form for editing current product
     product.showEditForm = function(productId) {
+        productId = parseInt(productId);
+
         $.ajax({
             type: "GET",
-            url: "/admin/api/prod/" + parseInt(productId),
+            url: "/admin/api/prod/" + xssFilters.uriPathInUnQuotedAttr(productId),
             dataType: "json",
         }).done(function(response) {
             // compile "edit-product-form-tpl" if needed
@@ -201,7 +204,7 @@
             // select product's category
             updateCategoryOptions($("#edit-product-category-id"), function() {
                 $("#edit-product-category-id option").prop("selected", false);
-                $("#edit-product-category-id option[value=" + response.catid + "]").prop("selected", true);
+                $("#edit-product-category-id option[value=" + xssFilters.inUnQuotedAttr(response.catid) + "]").prop("selected", true);
             });
 
             // bind click event to buttons
@@ -259,7 +262,7 @@
         if( pid > 0 ) {
             $.ajax({
                 type: "POST",
-                url: "/admin/api/prod/" + pid + "/delete",
+                url: "/admin/api/prod/" + xssFilters.uriPathInUnQuotedAttr(pid) + "/delete",
                 dataType: "json",
             }).done(function(response) {
                 // refesh product list in current category

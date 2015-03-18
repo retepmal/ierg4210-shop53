@@ -79,25 +79,41 @@
 </div>
 
 <script id="category-list-tpl" type="text/x-handlebars-template">
+    {{!-- before context-parser-handlebars:
     <option value="">Please select a category</option>
     \{{#categories}}
     <option value="\{{catid}}">\{{name}}</option>
     \{{/categories}}
+    --}}
+
+    <option value="">Please select a category</option>
+    \{{#categories}}
+    <option value="\{{{yavd catid}}}">\{{{yd name}}}</option>
+    \{{/categories}}
 </script>
 
 <script id="warn-invalid-form-tpl" type="text/x-handlebars-template">
-<p>The following fields are invalid:</p>
-<ul>
-    \{{#fields}}
-    <li>\{{.}}</li>
-    \{{/fields}}
-</ul>
+    {{!-- before context-parser-handlebars:
+    <p>The following fields are invalid:</p>
+    <ul>
+        \{{#fields}}
+        <li>\{{.}}</li>
+        \{{/fields}}
+    </ul>
+    --}}
+
+    <p>The following fields are invalid:</p>
+    <ul>
+        \{{#fields}}
+        <li>\{{{yd .}}}</li>
+        \{{/fields}}
+    </ul>
 </script>
 
 <script id="success-message-tpl" type="text/x-handlebars-template">
     <div class="alert alert-success alert-dismissible" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        \{{message}}
+        \{{{yd message}}}
     </div>
 </script>
 
