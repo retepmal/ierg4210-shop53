@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `password` char(45) COLLATE utf8_unicode_ci NOT NULL,
   `salt` char(45) COLLATE utf8_unicode_ci NOT NULL,
+  `activation_key` varchar(36) COLLATE utf8_unicode_ci DEFAULT NULL,
   `is_admin` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 

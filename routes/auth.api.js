@@ -73,14 +73,26 @@ module.exports = function(pool) {
 
                     hmac.update(req.body.password);
                     if( hmac.digest('base64') == result.rows[0].password ) {
-                        // success
-                        req.session.regenerate(function() {
-                            // set authenticated information
-                            req.session.authenticated = true;
-                            req.session.is_admin = ( result.rows[0].is_admin == 1 );
+                        if( result.rows[0].activation_key === null ) {
+                            // success
+                            req.session.regenerate(function() {
+                                // set authenticated information
+                                req.session.authenticated = true;
+                                req.session.is_admin = ( result.rows[0].is_admin == 1 );
 
-                            return res.status(200).end();
-                        });
+                                return res.status(200).end();
+                            });
+                        } else {
+                            // wrong credential
+                            req.session.regenerate(function() {
+                                // send new csrf token via response header
+                                res.set('Access-Control-Expose-Headers', 'X-CSRF-Refresh');
+                                res.set('X-CSRF-Refresh', req.csrfToken());
+
+                                return res.status(412).end();
+                            });
+
+                        }
 
                     } else {
                         // wrong credential

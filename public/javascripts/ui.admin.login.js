@@ -39,6 +39,10 @@
                     signin.changePanel("panel-danger", "Your email or password is incorrect. Please re-try.");
                     break;
 
+                case 412:
+                    signin.changePanel("panel-danger", "Please activate your account through the link in email.");
+                    break;
+
                 case 403:
                 default:
                     signin.changePanel("panel-danger", "Please refresh this page and re-try.");
