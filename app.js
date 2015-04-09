@@ -8,6 +8,8 @@ var anyDB   = require('any-db'),
     frontEndRouter    = require(__dirname + '/routes/frontend.js'),
     frontEndAPIRouter = require(__dirname + '/routes/frontend.api.js'),
     cartRouter        = require(__dirname + '/routes/cart.js'),
+    accountRouter     = require(__dirname + '/routes/account.js'),
+    accountAPIRouter  = require(__dirname + '/routes/account.api.js'),
     authRouter        = require(__dirname + '/routes/auth.api.js'),
     backEndRouter     = require(__dirname + '/routes/backend.js'),
     backEndAPIRouter  = require(__dirname + '/routes/backend.api.js');
@@ -55,10 +57,25 @@ app.use('/lib', express.static(__dirname + '/public/javascripts'));
 app.use('/css', express.static(__dirname + '/public/stylesheets'));
 app.use('/fonts', express.static(__dirname + '/public/fonts'));
 
+/*
+ * middleware to enforce full site in HTTPS
+ */
+app.use('/', function(req, res) {
+    var schema = req.headers['x-forwarded-proto'];
+
+    if( process.env.NODE_ENV == 'production' && schema != 'https' ) {
+        res.redirect(303, 'https://' + req.headers.host + '/' + req.url);
+    } else {
+        req.next();
+    }
+});
+
 // include frontend and backend routers
 app.use('/', frontEndRouter(pool));
 app.use('/api', frontEndAPIRouter(pool));
 app.use('/cart', cartRouter(pool));
+app.use('/account', accountRouter(pool)); // highest priority in /account
+app.use('/account/api', accountAPIRouter(pool));
 app.use('/admin', authRouter(pool)); // highest priority in /admin
 app.use('/admin', backEndRouter(pool));
 app.use('/admin/api', backEndAPIRouter(pool));

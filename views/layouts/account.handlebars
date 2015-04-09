@@ -3,20 +3,24 @@
     <head>
         <meta charset="utf-8">
         <meta name="csrf-token" content="{{_csrf}}">
-        <title>Rilakkuma Store - Admin Panel</title>
+        <title>Rilakkuma Store - User Account</title>
 
         <link rel="stylesheet" href="/css/bootstrap.min.css">
         <link rel="stylesheet" href="/css/font-awesome.min.css">
-        <link rel="stylesheet" href="/css/admin.css">
     </head>
     <body>
         <div class="container">
-            <h1>Rilakkuma Store <small>Admin Panel</small></h1>
+            <h1>Rilakkuma Store <small>User Account</small></h1>
 
             <ul class="nav nav-tabs">
-                <li role="presentation" {{#equal adminSection 'categories'}}class="active"{{/equal}}><a href="/admin/categories">Categories</a></li>
-                <li role="presentation" {{#equal adminSection 'products'}}class="active"{{/equal}}><a href="/admin/products">Products</a></li>
+
+            {{#equal userSection 'login'}}
+                <li role="presentation" class="pull-right"><a href="/" class="text-success">Return to Store</a></li>
+            {{else}}
+                <li role="presentation" {{#equal userSection 'orders'}}class="active"{{/equal}}><a href="/account">Orders</a></li>
                 <li role="presentation" class="pull-right"><a href="/account/logout" class="text-danger">Sign Out</a></li>
+                <li role="presentation" class="pull-right"><a href="/" class="text-success">Return to Store</a></li>
+            {{/equal}}
             </ul>
 
             {{{body}}}

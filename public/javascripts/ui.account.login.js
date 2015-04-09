@@ -21,7 +21,7 @@
 
         $.ajax({
             type: "POST",
-            url: "/admin/api/login",
+            url: "/account/api/login",
             data: $("#signin-panel form").serialize(),
             beforeSend: function() {
                 // disable all inputs and buttons
@@ -30,8 +30,8 @@
         }).done(function(response) {
             signin.changePanel("panel-success", "Success!");
 
-            // redirect to admin panel default page
-            location.href = "/admin";
+            // redirect to account default page
+            location.href = "/account";
 
         }).error(function(xhr) {
             switch( xhr.status ) {
