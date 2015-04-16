@@ -3,13 +3,24 @@
     color: white;
     cursor: pointer;
 }
-#cart {
-    background-color: #FCD729;
+#my-account, #cart {
     padding: 10px;
     position: absolute;
-    right: 0;
     top: 25px;
     z-index: 99;
+}
+#my-account {
+    background-color: #FFFBF2;
+    right: 0;
+    cursor: pointer;
+    color: #0069FC;
+}
+#my-account:hover {
+    background-color: #FCECC2;
+}
+#cart {
+    background-color: #FCD729;
+    right: 110px;
 }
 #cart-summary {
     position: relative;

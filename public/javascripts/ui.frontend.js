@@ -20,9 +20,12 @@
             }
         });
 
-        // handle click on store title
+        // handle clicks on store navbar
         $("#store-title").click(function() {
             frontend.loadPage("/");
+        });
+        $("#my-account").click(function() {
+            location.href = "/account";
         });
     }
 
