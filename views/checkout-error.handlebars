@@ -1,0 +1,24 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <h1 class="text-danger">
+                {{#equal errorType 'error'}}
+                Oops! An error has occurred.
+                {{/equal}}
+                {{#equal errorType 'payment'}}
+                Oops! The payment is cancelled.
+                {{/equal}}
+            </h1>
+
+            {{#equal errorType 'error'}}
+            <div class="alert alert-danger" role="alert">{{errorMessage}}</div>
+            {{/equal}}
+
+            <h3>You may want to:</h3>
+            {{#equal errorType 'payment'}}
+            <a href="{{retryUrl}}" class="btn btn-info">Retry Payment</a>
+            {{/equal}}
+            <a href="/" class="btn btn-success">Return to Store</a>
+        </div>
+    </div>
+</div>

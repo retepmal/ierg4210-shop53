@@ -16,6 +16,20 @@ CREATE TABLE IF NOT EXISTS `categories` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `payments`
+--
+
+CREATE TABLE IF NOT EXISTS `payments` (
+  `payid` int(11) NOT NULL,
+  `userid` int(11) NOT NULL,
+  `paymentId` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `state` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
+  `dateCreated` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `products`
 --
 
@@ -54,6 +68,12 @@ ALTER TABLE `categories`
   ADD PRIMARY KEY (`catid`);
 
 --
+-- Indexes for table `payments`
+--
+ALTER TABLE `payments`
+  ADD PRIMARY KEY (`payid`), ADD UNIQUE KEY `user-payment` (`userid`,`paymentId`), ADD KEY `state` (`state`);
+
+--
 -- Indexes for table `products`
 --
 ALTER TABLE `products`
@@ -74,6 +94,11 @@ ALTER TABLE `users`
 --
 ALTER TABLE `categories`
   MODIFY `catid` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `payments`
+--
+ALTER TABLE `payments`
+  MODIFY `payid` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `products`
 --

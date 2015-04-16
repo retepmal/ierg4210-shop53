@@ -122,7 +122,7 @@ module.exports = function(pool, config, redisClient) {
                     for( var i = 0; i < result.rowCount; i++ ) {
                         items.push({
                             "name": result.rows[i].name,
-                            "sku": "P#" + result.rows[i].pid,
+                            "sku": "PID-" + result.rows[i].pid,
                             "price": result.rows[i].price.toFixed(2),
                             "currency": "USD",
                             "quantity": cartItems[result.rows[i].pid]
@@ -184,7 +184,47 @@ module.exports = function(pool, config, redisClient) {
     });
 
     app.get('/error', function(req, res) {
-        res.status(200).end();
+        var errorType = ( typeof req.query.token == 'string' ) ? 'payment' : 'error';
+        var errorMessage = '';
+        var retryUrl = '';
+
+        if( errorType == 'payment' ) {
+            var token = req.query.token;
+            retryUrl = 'https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=' + token;
+
+        } else {
+            var errcode = req.query.message;
+
+            switch( errcode ) {
+                case 'paypal_error':
+                    errorMessage = 'Rilakkuma reported there is an error from paypal service. Please retry later.';
+                    break;
+
+                case 'server_error':
+                    errorMessage = 'Rilakkuma reported there is an error on server. Please retry later.';
+                    break;
+
+                case 'empty_cart':
+                    errorMessage = 'Products in your cart is not available now. Please choose other products to checkout.';
+                    break;
+
+                default:
+                    errorMessage = 'An unknown error has occurred. Please retry later.';
+                    break;
+            }
+        }
+
+        var cspRules = "default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'";
+        res.set('Content-Security-Policy', cspRules);
+        res.set('X-Content-Security-Policy', cspRules);
+        res.set('X-WebKit-CSP', cspRules);
+
+        res.render('checkout-error', {
+            layout: 'checkout',
+            errorType: errorType,
+            errorMessage: errorMessage,
+            retryUrl: retryUrl
+        });
     });
 
     app.get('/thankyou', function(req, res) {
