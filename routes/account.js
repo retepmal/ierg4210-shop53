@@ -10,8 +10,7 @@ module.exports = function(pool) {
     // this line must be immediately after express.bodyParser()!
     app.use(expressValidator());
 
-    // expected: /account/login
-    app.get('/login', function(req, res) {
+    var signinPage = function(req, res) {
         var cspRules = "default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self'; font-src 'self'; connect-src 'self'";
         res.set('Content-Security-Policy', cspRules);
         res.set('X-Content-Security-Policy', cspRules);
@@ -20,10 +19,19 @@ module.exports = function(pool) {
         res.render('account-login', {
             layout: 'account',
             userSection: 'login',
-            uiScripts: ['ui.account.login.js'],
+            uiScripts: [
+                'URI.js',
+                'ui.account.login.js'
+            ],
             _csrf: req.csrfToken()
         });
-    });
+    };
+
+    // expected: /account/login
+    app.get('/login', signinPage);
+
+    // expected: /account/login/(action)
+    app.get('/login/:action(\\w+)', signinPage);
 
     // expected: /account/api/login
     app.post('/api/login', function(req, res) {
@@ -57,6 +65,7 @@ module.exports = function(pool) {
                             req.session.regenerate(function() {
                                 // set authenticated information
                                 req.session.authenticated = true;
+                                req.session.uid = result.rows[0].uid;
                                 req.session.is_admin = ( result.rows[0].is_admin == 1 );
 
                                 return res.status(200).end();

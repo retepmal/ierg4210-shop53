@@ -1,10 +1,10 @@
 (function(){
     var signin = window.signin = {};
 
+    var uri = new URI();
     signin.init = function() {
         // bind click event for signin button
         $("#signin-panel button").click(function() { signin.submit(); });
-
     };
 
     signin.submit = function() {
@@ -30,8 +30,17 @@
         }).done(function(response) {
             signin.changePanel("panel-success", "Success!");
 
-            // redirect to account default page
-            location.href = "/account";
+            switch( uri.filename() ) {
+                case "checkout":
+                    // redirect to checkout page
+                    location.href = "/checkout";
+                    break;
+
+                default:
+                    // redirect to account default page
+                    location.href = "/account";
+                    break;
+            }
 
         }).error(function(xhr) {
             switch( xhr.status ) {

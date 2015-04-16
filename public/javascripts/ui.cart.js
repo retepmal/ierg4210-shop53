@@ -244,7 +244,29 @@
         }
     }
 
-    cart.checkout = function() {}
+    cart.checkout = function() {
+        var cartItems = readLocalStorage();
+
+        $.ajax({
+            type: "POST",
+            url: "/checkout",
+            data: JSON.stringify(cartItems),
+            contentType: 'application/json',
+            processData: false,
+            dataType: "json",
+        }).done(function(response) {
+            // check if the redirectUri exists in response
+            if( typeof response.redirect != "undefined" ) {
+                location.href = response.redirect;
+            } else {
+                location.href = "/checkout/error";
+            }
+
+        }).error(function(err) {
+            // unknown error occurs, redirect user to checkout error page
+            location.href = "/checkout/error";
+        });
+    }
 })();
 
 $(function() {
