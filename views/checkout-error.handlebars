@@ -16,7 +16,7 @@
 
             <h3>You may want to:</h3>
             {{#equal errorType 'payment'}}
-            <a href="{{retryUrl}}" class="btn btn-info">Retry Payment</a>
+            <a href="https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&amp;token={{retryToken}}" class="btn btn-info">Retry Payment</a>
             {{/equal}}
             <a href="/" class="btn btn-success">Return to Store</a>
         </div>

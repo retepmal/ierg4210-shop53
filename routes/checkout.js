@@ -158,7 +158,7 @@ module.exports = function(pool, config, redisClient) {
                         }
 
                         // payment created, insert a user-specific database record
-                        pool.query('INSERT INTO payments (userid, paymentId, state, dateCreated) VALUES (?, ?, ?, NOW());',
+                        pool.query('INSERT INTO payments (userid, paymentId, state, dateCreated) VALUES (?, ?, ?, NOW())',
                             [req.session.uid, payment.id, payment.state],
                             function(error, result) {
                                 if( error ) {
@@ -184,13 +184,18 @@ module.exports = function(pool, config, redisClient) {
     });
 
     app.get('/error', function(req, res) {
+        var isValidUser = ( req.session && req.session.authenticated );
+        if( !isValidUser ) {
+            // user is not signed in
+            return res.redirect(302, '/');
+        }
+
         var errorType = ( typeof req.query.token == 'string' ) ? 'payment' : 'error';
         var errorMessage = '';
         var retryUrl = '';
 
         if( errorType == 'payment' ) {
             var token = req.query.token;
-            retryUrl = 'https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=' + token;
 
         } else {
             var errcode = req.query.message;
@@ -202,6 +207,10 @@ module.exports = function(pool, config, redisClient) {
 
                 case 'server_error':
                     errorMessage = 'Rilakkuma reported there is an error on server. Please retry later.';
+                    break;
+
+                case 'payment_error':
+                    errorMessage = 'Rilakkuma can not find the payment information. Please check your account page.';
                     break;
 
                 case 'empty_cart':
@@ -223,12 +232,79 @@ module.exports = function(pool, config, redisClient) {
             layout: 'checkout',
             errorType: errorType,
             errorMessage: errorMessage,
-            retryUrl: retryUrl
+            retryToken: token
         });
     });
 
     app.get('/thankyou', function(req, res) {
-        res.status(200).end();
+        var isValidUser = ( req.session && req.session.authenticated );
+        if( !isValidUser ) {
+            // user is not signed in
+            return res.redirect(302, '/');
+        }
+
+        var isQueryValid = (
+            ( typeof req.query.paymentId == "string" ) &&
+            ( typeof req.query.token == "string" ) &&
+            ( typeof req.query.PayerID == "string" ) );
+
+        if( !isQueryValid ) {
+            // invalid query string received
+            return res.redirect(302, '/checkout/error');
+        }
+
+        var userid = req.session.uid;
+        var paymentId = req.query.paymentId;
+        var payerID = req.query.PayerID;
+        var token = req.query.token;
+
+        // find the payment created in database
+        pool.query('SELECT payid FROM payments WHERE userid = ? AND paymentId = ? LIMIT 1',
+            [userid, paymentId],
+            function(error, result) {
+                if( error ) {
+                    return res.redirect(302, '/checkout/error?message=server_error');
+                }
+
+                // no existing payment matched
+                if( result.rowCount == 0 ) {
+                    return res.redirect(302, '/checkout/error?message=payment_error');
+                }
+
+                var payId = result.rows[0].payid;
+
+                // execute payment to obtain the latest state
+                var payment_json = {payer_id: payerID};
+
+                paypal.payment.execute(paymentId, payment_json, function(error, payment) {
+                    if( error ) {
+                        return res.redirect(302, '/checkout/error?message=paypal_error');
+                    }
+
+                    if( payment.state == 'approved' ) {
+                        // update database record
+                        pool.query('UPDATE payments SET state = ? WHERE payid = ? LIMIT 1',
+                            [payment.state, payId],
+                            function(error, result) {
+                                if( error ) {
+                                    return res.redirect(302, '/checkout/error?message=server_error');
+                                }
+
+                                res.render('checkout-thankyou', {
+                                    layout: 'checkout',
+                                    orderCurrency: payment.transactions[0].amount.currency,
+                                    orderAmount: payment.transactions[0].amount.total
+                                });
+                            }
+                        );
+
+                    } else {
+                        // payment rejected
+                        return res.redirect(302, '/checkout/error?token=' + token);
+                    }
+                });
+            }
+        );
     });
 
     return app;
