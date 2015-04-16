@@ -1,0 +1,55 @@
+<br />
+<div class="row">
+    <!-- category selection and product list -->
+    <div class="col-md-5">
+        <div class="panel panel-default">
+            <table class="table table-hover" id="user-order-list">
+                <thead>
+                    <tr class="active">
+                        <th>Date Created</th>
+                        <th>Payment ID</th>
+                        <th>State</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-md-7" id="user-order-content">
+        <div class="alert alert-info">Click on <strong>Payment ID</strong> to show order details.</div>
+    </div>
+</div>
+
+<script id="order-list-empty-tpl" type="text/x-handlebars-template">
+    <tr>
+        <td colspan="3" class="warning text-center">There are no orders associated with this account.</td>
+    </tr>
+</script>
+
+<script id="order-list-item-tpl" type="text/x-handlebars-template">
+    {{!-- before context-parser-handlebars:
+    \{{#items}}
+    <tr class="order-item" data-pid="\{{payid}}">
+        <td>\{{dateTime}}</td>
+        <td class="order-item-payment">\{{paymentId}}</td>
+        <td><span class="label \{{labelClass}}">\{{state}}</span></td>
+    </tr>
+    \{{/items}}
+    --}}
+
+    \{{#items}}
+    <tr class="order-item" data-pid="\{{{yavd payid}}}">
+        <td>\{{{yd dateTime}}}</td>
+        <td class="order-item-payment">\{{{yd paymentId}}}</td>
+        <td><span class="label \{{{yavd labelClass}}}">\{{{yd state}}}</span></td>
+    </tr>
+    \{{/items}}
+</script>
+
+<script id="error-message-tpl" type="text/x-handlebars-template">
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        \{{{message}}}
+    </div>
+</script>

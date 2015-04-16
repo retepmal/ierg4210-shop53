@@ -137,3 +137,13 @@ section.product-detail-description h4 button {
 section.product-detail-description article {
     margin-top: 20px;
 }
+
+tr.order-item:hover {
+    cursor: pointer;
+}
+td.order-item-payment {
+    color: #1755FF;
+}
+td.order-item-payment:hover {
+    text-decoration: underline;
+}

@@ -149,7 +149,7 @@ module.exports = function(pool) {
         res.render('account-orders', {
             layout: 'account',
             userSection: 'orders',
-            uiScripts: [],
+            uiScripts: ['ui.account.order.js'],
             _csrf: req.csrfToken()
         });
     });
