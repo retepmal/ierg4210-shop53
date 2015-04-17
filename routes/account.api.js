@@ -31,7 +31,7 @@ module.exports = function(pool) {
                 }
 
                 paypal.payment.get(result.rows[0].paymentId, function(error, payment) {
-                    if( error ) { console.log(error);
+                    if( error ) {
                         return res.status(500).send('Paypal payment expired').end();
                     }
 
