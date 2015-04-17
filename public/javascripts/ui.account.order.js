@@ -59,7 +59,61 @@
         });
     }
 
-    order.loadDetails = function(pid) { }
+    order.loadDetails = function(pid) {
+        // compile "loading-message-tpl" if needed
+        if( typeof compiledTemplate.loadingMessage == "undefined" ) {
+            compiledTemplate.loadingMessage = Handlebars.compile($("#loading-message-tpl").html());
+        }
+
+        var rendered = compiledTemplate.loadingMessage();
+        $("#user-order-content").html(rendered);
+
+        $.ajax({
+            type: "GET",
+            url: "/account/api/order/" + pid,
+            dataType: "json",
+        }).done(function(response) {
+            // determine the label class
+            switch( response.state ) {
+                case "approved":
+                    response.labelClass = "label-success";
+                    response.panelClass = "panel-info";
+                    break;
+
+                case "created":
+                default:
+                    response.labelClass = "label-primary";
+                    response.panelClass = "panel-warning";
+                    break;
+            }
+
+            // parse created and updated data to more readable
+            var created = moment(response.created);
+            var updated = moment(response.updated);
+
+            response.created = created.format("YYYY/D/M hh:mm:ss A");
+            response.updated = updated.format("YYYY/D/M hh:mm:ss A");
+
+            // compile "order-detail-tpl" if needed
+            if( typeof compiledTemplate.orderDetails == "undefined" ) {
+                compiledTemplate.orderDetails = Handlebars.compile($("#order-detail-tpl").html());
+            }
+
+            // incorrect response
+            var rendered = compiledTemplate.orderDetails(response);
+            $("#user-order-content").html(rendered);
+
+        }).error(function(error) {
+            // compile "error-message-tpl" if needed
+            if( typeof compiledTemplate.errorMessage == "undefined" ) {
+                compiledTemplate.errorMessage = Handlebars.compile($("#error-message-tpl").html());
+            }
+
+            // incorrect response
+            var rendered = compiledTemplate.errorMessage({message: error.responseText});
+            $("#user-order-content").html(rendered);
+        });
+    }
 })();
 
 $(function() {

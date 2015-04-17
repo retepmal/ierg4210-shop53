@@ -27,6 +27,96 @@
     </tr>
 </script>
 
+<script id="order-detail-tpl" type="text/x-handlebars-template">
+    {{!-- before context-parser-handlebars:
+    <div class="panel \{{panelClass}}">
+        <div class="panel-heading">
+            <strong>Your order details for \{{paymentId}}</strong>
+            <span class="label \{{labelClass}} pull-right">\{{state}}</span>
+        </div>
+        <div class="panel-body">
+            <p>Order Created: \{{created}}</p>
+            <p>Last Updated: \{{updated}}</p>
+            <br />
+            <table class="table table-hover">
+                <thead>
+                    <tr class="active">
+                        <th colspan="2">Product</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                \{{#items}}
+                    <tr class="order-items">
+                        <td class="col-md-2"><img src="/images/products/\{{pid}}.\{{image_extension}}" class="img-thumbnail " /></td>
+                        <td class="col-md-4">\{{name}}</td>
+                        <td class="col-md-1 text-right">\{{quantity}}</td>
+                        <td class="col-md-3">\{{currency}} \{{price}}</td>
+                    </tr>
+                \{{/items}}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="3" class="text-right">Total</th>
+                        <th>\{{currency}} \{{total}}</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        \{{#retry}}
+        <div class="panel-footer text-right">
+            You may want to:
+            <a href="\{{.}}" class="btn btn-warning">Retry payment</a>
+        </div>
+        \{{/retry}}
+    </div>
+    --}}
+
+    <div class="panel \{{{yavd panelClass}}}">
+        <div class="panel-heading">
+            <strong>Your order details for \{{{yd paymentId}}}</strong>
+            <span class="label \{{{yavd labelClass}}} pull-right">\{{{yd state}}}</span>
+        </div>
+        <div class="panel-body">
+            <p>Order Created: \{{{yd created}}}</p>
+            <p>Last Updated: \{{{yd updated}}}</p>
+            <br />
+            <table class="table table-hover">
+                <thead>
+                    <tr class="active">
+                        <th colspan="2">Product</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                \{{#items}}
+                    <tr class="order-items">
+                        <td class="col-md-2"><img src="/images/products/\{{{yavd (yu pid)}}}.\{{{yavd (yu image_extension)}}}" class="img-thumbnail " /></td>
+                        <td class="col-md-4">\{{{yd name}}}</td>
+                        <td class="col-md-1 text-right">\{{{yd quantity}}}</td>
+                        <td class="col-md-3">\{{{yd currency}}} \{{{yd price}}}</td>
+                    </tr>
+                \{{/items}}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="3" class="text-right">Total</th>
+                        <th>\{{{yd currency}}} \{{{yd total}}}</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        \{{#retry}}
+        <div class="panel-footer text-right">
+            You may want to:
+            <a href="\{{{yavd (yu .)}}}" class="btn btn-success">Retry payment</a>
+        </div>
+        \{{/retry}}
+    </div>
+</script>
+
 <script id="order-list-item-tpl" type="text/x-handlebars-template">
     {{!-- before context-parser-handlebars:
     \{{#items}}
@@ -45,6 +135,12 @@
         <td><span class="label \{{{yavd labelClass}}}">\{{{yd state}}}</span></td>
     </tr>
     \{{/items}}
+</script>
+
+<script id="loading-message-tpl" type="text/x-handlebars-template">
+    <div class="alert alert-info" role="alert">
+        <i class="fa fa-refresh fa-spin loading-spin"></i> Please wait...
+    </div>
 </script>
 
 <script id="error-message-tpl" type="text/x-handlebars-template">

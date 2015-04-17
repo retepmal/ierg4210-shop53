@@ -147,3 +147,11 @@ td.order-item-payment {
 td.order-item-payment:hover {
     text-decoration: underline;
 }
+
+tr.order-items img {
+    max-width: 160px;
+    max-height: 200px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
