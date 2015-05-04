@@ -45,6 +45,7 @@
     "node-uuid": "^1.4.3",
     "paypal-rest-sdk": "^1.5.2",
     "redis": "^0.12.1",
+    "slug": "^0.9.1",
     "uuid": "^2.0.1"
   },
   "devDependencies": {

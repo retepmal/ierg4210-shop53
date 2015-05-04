@@ -41,7 +41,7 @@
                     break;
                 case 'failed':
                     tpl = "#error-message-tpl";
-                    msg = "Fail! Invalid form submitted.";
+                    msg = ( state.reason ) ? xssFilters.inHTMLData(state.reason) : "Fail! Invalid form submitted.";
                     break;
             }
 

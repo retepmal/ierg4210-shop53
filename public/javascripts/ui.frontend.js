@@ -5,6 +5,7 @@
     var host = uri.host();
     var compiledTemplate = {};
     var categoryList = {};
+    var categorySlugList = {0: "all"};
     frontend.init = function() {
         loadCategoryList();
         frontend.loadPage(location.href);
@@ -22,7 +23,7 @@
 
         // handle clicks on store navbar
         $("#store-title").click(function() {
-            frontend.loadPage("/");
+            frontend.loadLink("/");
         });
         $("#my-account").click(function() {
             location.href = "/account";
@@ -39,27 +40,27 @@
 
         // list of regex patterns
         var defaultPage = /^\/$/;
-        var categoryPage = /^\/(\d+)(?:|\/page\/(\d+))(?:|\/)$/;
-        var productPage = /^\/(\d+)\/(\d+)(?:|\/)$/;
+        var categoryPage = /^\/(\d+)\-([\w\-]+)(?:|\/page\/(\d+))(?:|\/)$/;
+        var productPage = /^\/(\d+)\-([\w\-]+)\/(\d+)\-([\w\-]+)(?:|\/)$/;
 
         if( uri.host() == host || uri.host() == "" ) {
             if( defaultPage.test(path) ) {
                 matched = true;
-                loadCategory(0, 1);
+                loadCategory(0, 1, "all");
             }
 
             if( categoryPage.test(path) ) {
                 matched = true;
                 param = categoryPage.exec(path);
 
-                loadCategory(param[1], ((typeof param[2] == 'undefined') ? 1: param[2]));
+                loadCategory(param[1], ((typeof param[3] == 'undefined') ? 1: param[3]), param[2]);
             }
 
             if( productPage.test(path) ) {
                 matched = true;
                 param = productPage.exec(path);
 
-                loadProduct(param[2]);
+                loadProduct(param[3], param[4]);
             }
         }
 
@@ -71,6 +72,10 @@
     frontend.clickLink = function(anchor) {
         var targetUrl = xssFilters.uriInHTMLData($(anchor).attr("href"));
 
+        frontend.loadLink(targetUrl);
+    }
+
+    frontend.loadLink = function(targetUrl) {
         if( frontend.loadPage(targetUrl) ) {
             history.pushState({ path: targetUrl }, "", targetUrl);
         } else {
@@ -79,13 +84,16 @@
     }
 
     // show products in specific category
-    var loadCategory = function(catid, currentPage) {
+    var loadCategory = function(catid, currentPage, slug) {
         catid = parseInt(catid);
         currentPage = parseInt(currentPage);
+        slug = ( slug != false ) ? slug : "home";
+
+        var isCorrectSlug = ( slug == categorySlugList[catid] );
 
         $.ajax({
             type: "GET",
-            url: "/api/category/" + xssFilters.uriPathInUnQuotedAttr(catid) + "/" + xssFilters.uriPathInUnQuotedAttr(currentPage),
+            url: "/api/category/" + xssFilters.uriPathInUnQuotedAttr(catid) + "/" + xssFilters.uriPathInUnQuotedAttr(slug) + "/" + xssFilters.uriPathInUnQuotedAttr(currentPage),
             dataType: "json",
         }).done(function(response) {
             var tplVars = {
@@ -99,8 +107,10 @@
             }
 
             // update active category in left side list
-            $("ul#category-list li").removeClass("active");
-            $("ul#category-list li[data-catid=" + xssFilters.inUnQuotedAttr(catid) + "]").addClass("active");
+            if( isCorrectSlug ) {
+                $("ul#category-list li").removeClass("active");
+                $("ul#category-list li[data-catid=" + xssFilters.inUnQuotedAttr(catid) + "]").addClass("active");
+            }
 
             // prepare pagination variables
             tplVars.isFirstPage = ( currentPage == 1 );
@@ -112,13 +122,14 @@
                 tplVars.pages.push({
                     page: i,
                     catid: catid,
+                    catslug: categorySlugList[catid],
                     current: (i == currentPage)
                 });
             }
 
             // prepare navigation menu variables
-            tplVars.isInCategory = ( catid > 0 );
-            tplVars.categoryName = ( catid > 0 ) ? categoryList[catid] : '';
+            tplVars.isInCategory = ( catid > 0 && isCorrectSlug );
+            tplVars.categoryName = ( catid > 0 && isCorrectSlug ) ? categoryList[catid] : '';
 
             // process product list
             tplVars.isEmptyCategory = ( response.data.length == 0 );
@@ -142,12 +153,12 @@
     }
 
     // show products information
-    var loadProduct = function(pid) {
+    var loadProduct = function(pid, slug) {
         pid = parseInt(pid);
 
         $.ajax({
             type: "GET",
-            url: "/api/product/" + xssFilters.uriPathInUnQuotedAttr(pid),
+            url: "/api/product/" + xssFilters.uriPathInUnQuotedAttr(pid) + "/" + xssFilters.uriPathInUnQuotedAttr(slug),
             dataType: "json",
         }).done(function(response) {
             // compile "product-detail-tpl" if needed
@@ -158,12 +169,17 @@
             var tplVars = {
                 catid: response.catid,
                 categoryName: categoryList[response.catid],
+                categorySlug: response.catslug,
                 productId: pid,
                 productName: response.name,
                 productImage: response.image,
                 productPrice: response.price,
                 productDescription: response.description
             };
+
+            // update active category
+            $("ul#category-list li").removeClass("active");
+            $("ul#category-list li[data-catid=" + xssFilters.inUnQuotedAttr(response.catid) + "]").addClass("active");
 
             // render product list and show in content section
             $("#page-content").html(
@@ -198,6 +214,7 @@
             // cache category list for other usages
             $.each(response, function(k, v) {
                 categoryList[v.catid] = v.name;
+                categorySlugList[v.catid] = v.slug;
             });
 
             // render category list and show in content section

@@ -10,7 +10,8 @@
 
 CREATE TABLE IF NOT EXISTS `categories` (
   `catid` int(11) NOT NULL,
-  `name` varchar(128) COLLATE utf8_unicode_ci NOT NULL
+  `name` varchar(128) COLLATE utf8_unicode_ci NOT NULL,
+  `slug` varchar(128) COLLATE utf8_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
@@ -37,6 +38,7 @@ CREATE TABLE IF NOT EXISTS `products` (
   `pid` int(11) NOT NULL,
   `catid` int(11) NOT NULL,
   `name` varchar(128) COLLATE utf8_unicode_ci NOT NULL,
+  `slug` varchar(128) COLLATE utf8_unicode_ci NOT NULL,
   `price` decimal(10,2) NOT NULL,
   `description` text COLLATE utf8_unicode_ci NOT NULL,
   `s3_image_path` varchar(255) COLLATE utf8_unicode_ci NOT NULL

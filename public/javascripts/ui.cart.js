@@ -70,6 +70,8 @@
                     productInfo[v.pid] = {
                         name: v.name,
                         catid: v.catid,
+                        catslug: v.catslug,
+                        slug: v.slug,
                         price: v.price
                     };
                 });
@@ -84,6 +86,8 @@
                             pid: v.pid,
                             name: productInfo[v.pid].name,
                             catid: productInfo[v.pid].catid,
+                            catslug: productInfo[v.pid].catslug,
+                            slug: productInfo[v.pid].slug,
                             price: productInfo[v.pid].price,
                             qty: v.qty
                         });

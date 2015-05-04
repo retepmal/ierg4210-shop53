@@ -95,14 +95,19 @@ app.use('/admin/api', backEndAPIRouter(pool, config));
 
 // handle 404 not found situation
 app.use(function(req, res, next) {
-    var cspRules = "default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self'; font-src 'self'; connect-src 'self'";
-    res.set('Content-Security-Policy', cspRules);
-    res.set('X-Content-Security-Policy', cspRules);
-    res.set('X-WebKit-CSP', cspRules);
+    if( req.xhr ) {
+        res.status(404).send('Not Found').end();
 
-    res.status(404).render('error-notfound', {
-        layout: 'error'
-    });
+    } else {
+        var cspRules = "default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self'; font-src 'self'; connect-src 'self'";
+        res.set('Content-Security-Policy', cspRules);
+        res.set('X-Content-Security-Policy', cspRules);
+        res.set('X-WebKit-CSP', cspRules);
+
+        res.status(404).render('error-notfound', {
+            layout: 'error'
+        });
+    }
 });
 
 // start listening on port 3000

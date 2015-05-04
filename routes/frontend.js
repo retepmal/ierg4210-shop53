@@ -16,9 +16,9 @@ module.exports = function(pool, config) {
 
     // serve multiple pages
     app.get('/', renderFontEnd);
-    app.get('/:catid([0-9]+)', renderFontEnd);
-    app.get('/:catid([0-9]+)/:pid([0-9]+)', renderFontEnd);
-    app.get('/:catid([0-9]+)/page/:page([0-9]+)', renderFontEnd);
+    app.get(/^\/[0-9]+\-[\w\-]+$/, renderFontEnd);                  // i.e. /[catid]-[slug]
+    app.get(/^\/[0-9]+\-[\w\-]+\/[0-9]+\-[\w\-]+$/, renderFontEnd); // i.e. /[catid]-[slug]/[pid]-[slug]
+    app.get(/^\/[0-9]+\-[\w\-]+\/page\/[0-9]+$/, renderFontEnd);    // i.e. /[catid]-[slug]/page/[page#]
 
     return app;
 };

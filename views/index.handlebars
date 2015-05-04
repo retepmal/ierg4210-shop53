@@ -8,7 +8,7 @@
     <ul id="category-list" class="nav nav-pills nav-stacked">
         <li data-catid="0"><a href="/" class="xhr-enable">All</a></li>
         \{{#each categories}}
-        <li data-catid="\{{catid}}"><a href="/\{{catid}}" class="xhr-enable">\{{name}}</a></li>
+        <li data-catid="\{{catid}}"><a href="/\{{catid}}-\{{slug}}" class="xhr-enable">\{{name}}</a></li>
         \{{/each}}
     </ul>
     --}}
@@ -16,7 +16,7 @@
     <ul id="category-list" class="nav nav-pills nav-stacked">
         <li data-catid="0"><a href="/" class="xhr-enable">All</a></li>
         \{{#each categories}}
-        <li data-catid="\{{{yavd catid}}}"><a href="/\{{{yavd (yu catid)}}}" class="xhr-enable">\{{{yd name}}}</a></li>
+        <li data-catid="\{{{yavd catid}}}"><a href="/\{{{yavd (yu catid)}}}-\{{{yavd (yu slug)}}}" class="xhr-enable">\{{{yd name}}}</a></li>
         \{{/each}}
     </ul>
 </script>
@@ -34,10 +34,10 @@
         \{{#each products}}
         <li>
             <div class="product-list-image">
-                <a href="/\{{catid}}/\{{pid}}" class="xhr-enable"><img src="\{{image}}" /></a>
+                <a href="/\{{catid}}-\{{catslug}}/\{{pid}}-\{{slug}}" class="xhr-enable"><img src="\{{image}}" /></a>
             </div>
             <div class="product-list-info">
-                <div class="product-list-name"><a href="/\{{catid}}/\{{pid}}" class="xhr-enable">\{{name}}</a></div>
+                <div class="product-list-name"><a href="/\{{catid}}-\{{catslug}}/\{{pid}}-\{{slug}}" class="xhr-enable">\{{name}}</a></div>
                 $\{{price}}
                 <button type="button" class="btn btn-sm btn-primary" name="addToCart" data-pid="\{{pid}}">Add</button>
             </div>
@@ -57,23 +57,23 @@
             <li class="disabled"><span aria-hidden="true">&laquo;</span></li>
             \{{else}}
             <li>
-                <a href="/\{{catid}}/page/\{{prevPage}}" aria-label="Previous" class="xhr-enable">
+                <a href="/\{{catid}}-\{{catslug}}/page/\{{prevPage}}" aria-label="Previous" class="xhr-enable">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
             \{{/if}}
             \{{#each pages}}
                 \{{#if current}}
-                <li class="active"><a href="\{{page}}" class="xhr-enable">\{{page}}</a></li>
+                <li class="active"><a href="/\{{catid}}-\{{catslug}}/page/\{{page}}" class="xhr-enable">\{{page}}</a></li>
                 \{{else}}
-                <li><a href="/\{{catid}}/page/\{{page}}" class="xhr-enable">\{{page}}</a></li>
+                <li><a href="/\{{catid}}-\{{catslug}}/page/\{{page}}" class="xhr-enable">\{{page}}</a></li>
                 \{{/if}}
             \{{/each}}
             \{{#if isLastPage}}
             <li class="disabled"><span aria-hidden="true">&raquo;</span></li>
             \{{else}}
             <li>
-                <a href="/\{{catid}}/page/\{{nextPage}}" aria-label="Next" class="xhr-enable">
+                <a href="/\{{catid}}-\{{catslug}}/page/\{{nextPage}}" aria-label="Next" class="xhr-enable">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>
@@ -93,10 +93,10 @@
         \{{#each products}}
         <li>
             <div class="product-list-image">
-                <a href="/\{{{yavd (yu catid)}}}/\{{{yavd (yu pid)}}}" class="xhr-enable"><img src="\{{{yavd (yu image)}}}" /></a>
+                <a href="/\{{{yavd (yu catid)}}}-\{{{yavd (yu catslug)}}}/\{{{yavd (yu pid)}}}-\{{{yavd (yu slug)}}}" class="xhr-enable"><img src="\{{{yavd (yu image)}}}" /></a>
             </div>
             <div class="product-list-info">
-                <div class="product-list-name"><a href="/\{{{yavd (yu catid)}}}/\{{{yavd (yu pid)}}}" class="xhr-enable">\{{{yd name}}}</a></div>
+                <div class="product-list-name"><a href="/\{{{yavd (yu catid)}}}-\{{{yavd (yu catslug)}}}/\{{{yavd (yu pid)}}}-\{{{yavd (yu slug)}}}" class="xhr-enable">\{{{yd name}}}</a></div>
                 $\{{{yd price}}}
                 <button type="button" class="btn btn-sm btn-primary" name="addToCart" data-pid="\{{{yavd pid}}}">Add</button>
             </div>
@@ -116,23 +116,23 @@
             <li class="disabled"><span aria-hidden="true">&laquo;</span></li>
             \{{else}}
             <li>
-                <a href="/\{{{yavd (yu catid)}}}/page/\{{{yavd (yu prevPage)}}}" aria-label="Previous" class="xhr-enable">
+                <a href="/\{{{yavd (yu catid)}}}-\{{{yavd (yu catslug)}}}/page/\{{{yavd (yu prevPage)}}}" aria-label="Previous" class="xhr-enable">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
             \{{/if}}
             \{{#each pages}}
                 \{{#if current}}
-                <li class="active"><a href="\{{{yavd (yu page)}}}" class="xhr-enable">\{{{yd page}}}</a></li>
+                <li class="active"><a href="/\{{{yavd (yu catid)}}}-\{{{yavd (yu catslug)}}}/page/\{{{yavd (yu page)}}}" class="xhr-enable">\{{{yd page}}}</a></li>
                 \{{else}}
-                <li><a href="/\{{{yavd (yu catid)}}}/page/\{{{yavd (yu page)}}}" class="xhr-enable">\{{{yd page}}}</a></li>
+                <li><a href="/\{{{yavd (yu catid)}}}-\{{{yavd (yu catslug)}}}/page/\{{{yavd (yu page)}}}" class="xhr-enable">\{{{yd page}}}</a></li>
                 \{{/if}}
             \{{/each}}
             \{{#if isLastPage}}
             <li class="disabled"><span aria-hidden="true">&raquo;</span></li>
             \{{else}}
             <li>
-                <a href="/\{{{yavd (yu catid)}}}/page/\{{{yavd (yu nextPage)}}}" aria-label="Next" class="xhr-enable">
+                <a href="/\{{{yavd (yu catid)}}}-\{{{yavd (yu catslug)}}}/page/\{{{yavd (yu nextPage)}}}" aria-label="Next" class="xhr-enable">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>
@@ -145,7 +145,7 @@
     {{!-- before context-parser-handlebars:
     <ol id="navigation-menu" class="breadcrumb">
         <li><a href="/" class="xhr-enable">Home</a></li>
-        <li><a href="/\{{catid}}" class="xhr-enable">\{{categoryName}}</a></li>
+        <li><a href="/\{{catid}}-\{{categorySlug}}" class="xhr-enable">\{{categoryName}}</a></li>
         <li class="active">\{{productName}}</li>
     </ol>
 
@@ -164,7 +164,7 @@
 
     <ol id="navigation-menu" class="breadcrumb">
         <li><a href="/" class="xhr-enable">Home</a></li>
-        <li><a href="/\{{{yavd (yu catid)}}}" class="xhr-enable">\{{{yd categoryName}}}</a></li>
+        <li><a href="/\{{{yavd (yu catid)}}}-\{{{yavd (yu categorySlug)}}}" class="xhr-enable">\{{{yd categoryName}}}</a></li>
         <li class="active">\{{{yd productName}}}</li>
     </ol>
 

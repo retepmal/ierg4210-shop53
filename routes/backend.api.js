@@ -6,7 +6,8 @@ var express = require('express'),
     multer = require('multer'),
     AWS = require('aws-sdk'),
     uuid = require('uuid'),
-    path = require('path');
+    path = require('path'),
+    slug = require('slug');
 
 module.exports = function(pool, config) {
     var app  = express.Router();
@@ -17,6 +18,9 @@ module.exports = function(pool, config) {
     // setup aws sdk and s3 environment
     AWS.config.update({accessKeyId: config.awsAccessKey, secretAccessKey: config.awsSecretKey, region: config.awsRegion});
     var photoBucket = new AWS.S3({params: {Bucket: config.s3ImagesBucket}});
+
+    // set default slug mode to rfc3986
+    slug.defaults.mode = 'rfc3986';
 
     app.use(bodyParser.urlencoded({extended:true}));
     // this line must be immediately after express.bodyParser()!
@@ -63,9 +67,11 @@ module.exports = function(pool, config) {
             return res.status(400).send(errors).end();
         }
 
+        var semantic_name = slug(req.body.name);
+
         // insert record to database
-        pool.query('INSERT INTO categories (name) VALUES (?)', 
-            [req.body.name],
+        pool.query('INSERT INTO categories (name, slug) VALUES (?, ?)',
+            [req.body.name, semantic_name],
             function(error, result) {
                 if( error ) {
                     return res.status(500).send('Database Error').end();
@@ -94,9 +100,11 @@ module.exports = function(pool, config) {
             return res.status(400).send(errors).end();
         }
 
+        var semantic_name = slug(req.body.name);
+
         // remove record from database
-        pool.query('UPDATE categories SET name = ? WHERE catid = ? LIMIT 1', 
-            [req.body.name, req.params.id],
+        pool.query('UPDATE categories SET name = ?, slug = ? WHERE catid = ? LIMIT 1',
+            [req.body.name, semantic_name, req.params.id],
             function(error, result) {
                 if( error ) {
                     return res.status(500).send('Database Error').end();
@@ -222,10 +230,11 @@ module.exports = function(pool, config) {
                 return res.redirect(303, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors).replace(/%20/g, '+'));
             }
 
+            var semantic_name = slug(req.body.name);
             var description = (typeof req.body.description != 'undefined') ? req.body.description : '';
 
-            pool.query('INSERT INTO products (catid, name, price, description, s3_image_path) VALUES (?, ?, ?, ?, ?)',
-                [req.body.catid, req.body.name, req.body.price, description, data.Location],
+            pool.query('INSERT INTO products (catid, name, slug, price, description, s3_image_path) VALUES (?, ?, ?, ?, ?, ?)',
+                [req.body.catid, req.body.name, semantic_name, req.body.price, description, data.Location],
                 function(error, result) {
                     if( error ) {
                         if( error.errno == 1452 ) {
@@ -333,13 +342,14 @@ module.exports = function(pool, config) {
         };
 
         // prepare new value
+        var semantic_name = slug(req.body.name);
         var description = (typeof req.body.description != 'undefined') ? req.body.description : '';
 
         // update database
         if( typeof req.files.photo == 'undefined' ) {
             // product image NOT to be replaced
-            pool.query('UPDATE products SET catid = ?, name = ?, price = ?, description = ? WHERE pid = ? LIMIT 1',
-                [req.body.catid, req.body.name, req.body.price, description, req.params.id],
+            pool.query('UPDATE products SET catid = ?, name = ?, slug = ?, price = ?, description = ? WHERE pid = ? LIMIT 1',
+                [req.body.catid, req.body.name, semantic_name, req.body.price, description, req.params.id],
                 queryCallback
             );
 
@@ -387,8 +397,8 @@ module.exports = function(pool, config) {
                             // ignore error for removing object
 
                             // update database record
-                            pool.query('UPDATE products SET catid = ?, name = ?, price = ?, description = ?, s3_image_path = ? WHERE pid = ? LIMIT 1',
-                                [req.body.catid, req.body.name, req.body.price, description, data.Location, req.params.id],
+                            pool.query('UPDATE products SET catid = ?, name = ?, slug = ?, price = ?, description = ?, s3_image_path = ? WHERE pid = ? LIMIT 1',
+                                [req.body.catid, req.body.name, semantic_name, req.body.price, description, data.Location, req.params.id],
                                 queryCallback
                             );
                         });
