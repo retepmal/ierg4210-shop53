@@ -1,12 +1,12 @@
 var express = require('express');
 
-module.exports = function(pool) {
+module.exports = function(pool, config) {
     var app = express.Router();
 
     // render all frontend pages using index.handlebars,
     // category and product data will be loaded via AJAX request
     function renderFontEnd(req, res) {
-        var cspRules = "default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'";
+        var cspRules = "default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self'; font-src 'self'; img-src " + config.s3ImagesDomain + "; connect-src 'self'";
         res.set('Content-Security-Policy', cspRules);
         res.set('X-Content-Security-Policy', cspRules);
         res.set('X-WebKit-CSP', cspRules);

@@ -3,13 +3,20 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     fs = require('fs'),
     util = require('util'),
-    multer = require('multer');
+    multer = require('multer'),
+    AWS = require('aws-sdk'),
+    uuid = require('uuid'),
+    path = require('path');
 
-module.exports = function(pool) {
+module.exports = function(pool, config) {
     var app  = express.Router();
 
     var allowedImageExtension = ['gif', 'GIF', 'jpg', 'JPG', 'png', 'PNG', 'jpeg'],
         allowedImageMimeType = ['image/gif', 'image/png', 'image/jpeg'];
+
+    // setup aws sdk and s3 environment
+    AWS.config.update({accessKeyId: config.awsAccessKey, secretAccessKey: config.awsSecretKey, region: config.awsRegion});
+    var photoBucket = new AWS.S3({params: {Bucket: config.s3ImagesBucket}});
 
     app.use(bodyParser.urlencoded({extended:true}));
     // this line must be immediately after express.bodyParser()!
@@ -201,30 +208,41 @@ module.exports = function(pool) {
             return res.redirect(303, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors).replace(/%20/g, '+'));
         }
 
-        // process photo and insert record to database
-        var description = (typeof req.body.description != 'undefined') ? req.body.description : '';
-        var image_extension = req.files.photo.extension.toLowerCase();
+        // upload product image to s3 and insert record when calling back
+        var targetFile = uuid.v4() + "." + req.files.photo.extension.toLowerCase();
 
-        pool.query('INSERT INTO products (catid, name, price, description, image_extension) VALUES (?, ?, ?, ?, ?)', 
-            [req.body.catid, req.body.name, req.body.price, description, image_extension],
-            function(error, result) {
-                if( error ) {
-                    if( error.errno == 1452 ) {
-                        // #1452: Cannot add or update a child row: a foreign key constraint fails
-                        var errors = 'Invalid Category ID';
-                    } else {
-                        var errors = 'Database Error';
+        photoBucket.upload({
+            ACL: 'public-read',
+            Body: fs.createReadStream(req.files.photo.path),
+            Key: targetFile,
+            ContentType: 'application/octet-stream' // force download if it's accessed as a top location
+        }).send(function(err, data) {
+            if( err ) {
+                var errors = 'Failed to upload to S3';
+                return res.redirect(303, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors).replace(/%20/g, '+'));
+            }
+
+            var description = (typeof req.body.description != 'undefined') ? req.body.description : '';
+
+            pool.query('INSERT INTO products (catid, name, price, description, s3_image_path) VALUES (?, ?, ?, ?, ?)',
+                [req.body.catid, req.body.name, req.body.price, description, data.Location],
+                function(error, result) {
+                    if( error ) {
+                        if( error.errno == 1452 ) {
+                            // #1452: Cannot add or update a child row: a foreign key constraint fails
+                            var errors = 'Invalid Category ID';
+                        } else {
+                            var errors = 'Database Error';
+                        }
+
+                        return res.redirect(303, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors).replace(/%20/g, '+'));
                     }
 
-                    return res.redirect(303, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors).replace(/%20/g, '+'));
+                    var pid = result.lastInsertId;
+                    res.redirect(303, '/admin/products/#?op=ok.added&catid=' + req.body.catid);
                 }
-
-                var pid = result.lastInsertId;
-                fs.rename(req.files.photo.path, __dirname + '/../public/images/products/' + pid + '.' + image_extension);
-
-                res.redirect(303, '/admin/products/#?op=ok.added&catid=' + req.body.catid);
-            }
-        );
+            );
+        });
     });
 
     // expected: /admin/api/prod/(pid)
@@ -293,7 +311,7 @@ module.exports = function(pool) {
         }
 
         // update query callback
-        var queryCallback = function(error, result, successCall) {
+        var queryCallback = function(error, result) {
             if( error ) {
                 if( error.errno == 1452 ) {
                     // #1452: Cannot add or update a child row: a foreign key constraint fails
@@ -311,10 +329,6 @@ module.exports = function(pool) {
                 return res.redirect(303, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors).replace(/%20/g, '+'));
             }
 
-            if( typeof successCall != 'undefined' ) {
-                successCall();
-            }
-
             res.redirect(303, '/admin/products/#?op=ok.edited&catid=' + req.body.catid);
         };
 
@@ -324,24 +338,60 @@ module.exports = function(pool) {
         // update database
         if( typeof req.files.photo == 'undefined' ) {
             // product image NOT to be replaced
-            pool.query('UPDATE products SET catid = ?, name = ?, price = ?, description = ? WHERE pid = ? LIMIT 1', 
+            pool.query('UPDATE products SET catid = ?, name = ?, price = ?, description = ? WHERE pid = ? LIMIT 1',
                 [req.body.catid, req.body.name, req.body.price, description, req.params.id],
                 queryCallback
             );
 
         } else {
             // product image IS to be replaced
-            var image_extension = req.files.photo.extension.toLowerCase();
 
-            pool.query('UPDATE products SET catid = ?, name = ?, price = ?, description = ?, image_extension = ? WHERE pid = ? LIMIT 1', 
-                [req.body.catid, req.body.name, req.body.price, description, image_extension, req.params.id],
+            var s3RemoveObject = function(filename, callback) {
+                photoBucket.deleteObject({Key: filename}, callback);
+            };
+
+            var s3UploadObject = function(localFile, targetFile, callback) {
+                photoBucket.upload({
+                    ACL: 'public-read',
+                    Body: fs.createReadStream(localFile),
+                    Key: targetFile,
+                    ContentType: 'application/octet-stream' // force download if it's accessed as a top location
+                }).send(callback);
+            }
+
+            // query the database for product record
+            pool.query('SELECT s3_image_path FROM products WHERE pid = ? LIMIT 1',
+                [req.params.id],
                 function(error, result) {
-                    queryCallback(error, result, function() {
-                        var pid = parseInt(req.params.id);
-                        var targetFile = __dirname + '/../public/images/products/' + pid + '.' + image_extension;
+                    if( error ) {
+                        var errors = 'Database Error';
+                        return res.redirect(303, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors).replace(/%20/g, '+'));
+                    }
 
-                        // replace product image if success
-                        fs.rename(req.files.photo.path, targetFile);
+                    // no rows are deleted
+                    if( result.affectedRows === 0 ) {
+                        var errors = 'Invalid Product ID';
+                        return res.redirect(303, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors).replace(/%20/g, '+'));
+                    }
+
+                    var oldImage = path.basename(result.rows[0].s3_image_path);
+                    var newImage = uuid.v4() + "." + req.files.photo.extension.toLowerCase();
+
+                    s3UploadObject(req.files.photo.path, newImage, function(err, data) {
+                        if( err ) {
+                            var errors = 'Failed to upload to S3';
+                            return res.redirect(303, '/admin/products/#?op=failed&reason=' + encodeURIComponent(errors).replace(/%20/g, '+'));
+                        }
+
+                        s3RemoveObject(oldImage, function() {
+                            // ignore error for removing object
+
+                            // update database record
+                            pool.query('UPDATE products SET catid = ?, name = ?, price = ?, description = ?, s3_image_path = ? WHERE pid = ? LIMIT 1',
+                                [req.body.catid, req.body.name, req.body.price, description, data.Location, req.params.id],
+                                queryCallback
+                            );
+                        });
                     });
                 }
             );
@@ -361,8 +411,8 @@ module.exports = function(pool) {
             return res.status(400).send(errors).end();
         }
 
-        // remove record from database
-        pool.query('DELETE FROM products WHERE pid = ? LIMIT 1', 
+        // query the database for product record
+        pool.query('SELECT s3_image_path FROM products WHERE pid = ? LIMIT 1',
             [req.params.id],
             function(error, result) {
                 if( error ) {
@@ -370,26 +420,37 @@ module.exports = function(pool) {
                 }
 
                 // no rows are deleted
-                if( result.affectedRows === 0 ) {
+                if( result.rows.length === 0 ) {
                     return res.status(400).send('Invalid Product ID').end();
                 }
 
-                // remove all product images in allowed extensions
-                for(var i = 0; i < allowedImageExtension.length; i++) {
-                    var pid = parseInt(req.params.id);
-                    var targetFile = __dirname + '/../public/images/products/' + pid + '.' + allowedImageExtension[i];
-                    
-                    if( fs.existsSync(targetFile) ) {
-                        fs.unlink(targetFile);
-                    }
-                }
+                var s3FileKey = path.basename(result.rows[0].s3_image_path);
 
-                return res.status(200).json({
-                    'success': true,
-                }).end();
-            }
-        );
-    });
+                // remove record from database
+                pool.query('DELETE FROM products WHERE pid = ? LIMIT 1',
+                    [req.params.id],
+                    function(error, result) {
+                        if( error ) {
+                            return res.status(500).send('Database Error').end();
+                        }
+
+                        // no rows are deleted
+                        if( result.affectedRows === 0 ) {
+                            return res.status(400).send('Invalid Product ID').end();
+                        }
+
+                        // remove product image from s3 bucket
+                        photoBucket.deleteObject({Key: s3FileKey}, function(err, data) {
+                            // ignore error and return
+                            return res.status(200).json({
+                                'success': true,
+                            }).end();
+                        });
+                    }
+                );
+            });
+        }
+    );
 
     return app;
 };

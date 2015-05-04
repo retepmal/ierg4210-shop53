@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `products` (
   `name` varchar(128) COLLATE utf8_unicode_ci NOT NULL,
   `price` decimal(10,2) NOT NULL,
   `description` text COLLATE utf8_unicode_ci NOT NULL,
-  `image_extension` varchar(5) COLLATE utf8_unicode_ci NOT NULL
+  `s3_image_path` varchar(255) COLLATE utf8_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------

@@ -63,7 +63,7 @@ module.exports = function(pool) {
                 var productCount = result.rows[0].count;
                 var pageSize = 10;
 
-                pool.query('SELECT pid, catid, name, price, CONCAT(pid, ".", image_extension) AS image FROM products ' + whereClause + ' ORDER BY name ASC LIMIT ?,?',
+                pool.query('SELECT pid, catid, name, price, s3_image_path AS image FROM products ' + whereClause + ' ORDER BY name ASC LIMIT ?,?',
                     (( req.params.id == 0 ) ?
                         [(req.params.page - 1) * pageSize, pageSize] :
                         [req.params.id, (req.params.page - 1) * pageSize, pageSize]
@@ -95,7 +95,7 @@ module.exports = function(pool) {
             return res.status(400).send(errors).end();
         }
 
-        pool.query('SELECT pid, catid, name, price, description, CONCAT(pid, ".", image_extension) AS image FROM products WHERE pid = ? LIMIT 1',
+        pool.query('SELECT pid, catid, name, price, description, s3_image_path AS image FROM products WHERE pid = ? LIMIT 1',
             [req.params.id],
             function(error, result) {
                 if( error ) {

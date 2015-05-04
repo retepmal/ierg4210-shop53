@@ -34,7 +34,7 @@
         \{{#each products}}
         <li>
             <div class="product-list-image">
-                <a href="/\{{catid}}/\{{pid}}" class="xhr-enable"><img src="/images/products/\{{image}}" /></a>
+                <a href="/\{{catid}}/\{{pid}}" class="xhr-enable"><img src="\{{image}}" /></a>
             </div>
             <div class="product-list-info">
                 <div class="product-list-name"><a href="/\{{catid}}/\{{pid}}" class="xhr-enable">\{{name}}</a></div>
@@ -64,7 +64,7 @@
             \{{/if}}
             \{{#each pages}}
                 \{{#if current}}
-                <li class="active"><a href="/\{{catid}}/page/\{{page}}" class="xhr-enable">\{{page}}</a></li>
+                <li class="active"><a href="\{{page}}" class="xhr-enable">\{{page}}</a></li>
                 \{{else}}
                 <li><a href="/\{{catid}}/page/\{{page}}" class="xhr-enable">\{{page}}</a></li>
                 \{{/if}}
@@ -93,7 +93,7 @@
         \{{#each products}}
         <li>
             <div class="product-list-image">
-                <a href="/\{{{yavd (yu catid)}}}/\{{{yavd (yu pid)}}}" class="xhr-enable"><img src="/images/products/\{{{yavd (yu image)}}}" /></a>
+                <a href="/\{{{yavd (yu catid)}}}/\{{{yavd (yu pid)}}}" class="xhr-enable"><img src="\{{{yavd (yu image)}}}" /></a>
             </div>
             <div class="product-list-info">
                 <div class="product-list-name"><a href="/\{{{yavd (yu catid)}}}/\{{{yavd (yu pid)}}}" class="xhr-enable">\{{{yd name}}}</a></div>
@@ -123,7 +123,7 @@
             \{{/if}}
             \{{#each pages}}
                 \{{#if current}}
-                <li class="active"><a href="/\{{{yavd (yu catid)}}}/page/\{{{yavd (yu page)}}}" class="xhr-enable">\{{{yd page}}}</a></li>
+                <li class="active"><a href="\{{{yavd (yu page)}}}" class="xhr-enable">\{{{yd page}}}</a></li>
                 \{{else}}
                 <li><a href="/\{{{yavd (yu catid)}}}/page/\{{{yavd (yu page)}}}" class="xhr-enable">\{{{yd page}}}</a></li>
                 \{{/if}}
@@ -150,7 +150,7 @@
     </ol>
 
     <section class="product-detail-image">
-        <img src="/images/products/\{{productImage}}" />
+        <img src="\{{productImage}}" />
     </section>
     <section class="product-detail-description">
         <h2>\{{productName}}</h2>
@@ -169,7 +169,7 @@
     </ol>
 
     <section class="product-detail-image">
-        <img src="/images/products/\{{{yavd (yu productImage)}}}" />
+        <img src="\{{{yavd (yu productImage)}}}" />
     </section>
     <section class="product-detail-description">
         <h2>\{{{yd productName}}}</h2>

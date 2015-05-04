@@ -78,15 +78,15 @@ app.use('/', function(req, res) {
 });
 
 // include frontend and backend routers
-app.use('/', frontEndRouter(pool));
+app.use('/', frontEndRouter(pool, config));
 app.use('/api', frontEndAPIRouter(pool));
 app.use('/cart', cartRouter(pool));
 app.use('/checkout', checkoutRouter(pool, config, redisClient));
 app.use('/account', accountRouter(pool)); // highest priority in /account
 app.use('/account/api', accountAPIRouter(pool));
 app.use('/admin', authRouter(pool)); // highest priority in /admin
-app.use('/admin', backEndRouter(pool));
-app.use('/admin/api', backEndAPIRouter(pool));
+app.use('/admin', backEndRouter(pool, config));
+app.use('/admin/api', backEndAPIRouter(pool, config));
 
 // handle 404 not found situation
 app.use(function(req, res, next) {
