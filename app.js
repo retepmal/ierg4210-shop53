@@ -71,7 +71,7 @@ app.use('/', function(req, res) {
     var schema = req.headers['x-forwarded-proto'];
 
     if( process.env.NODE_ENV == 'production' && schema != 'https' ) {
-        res.redirect(303, 'https://' + req.headers.host + '/' + req.url);
+        res.redirect(303, 'https://' + req.headers.host + req.url);
     } else {
         req.next();
     }
