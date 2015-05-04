@@ -73,6 +73,11 @@ app.use('/', function(req, res) {
     if( process.env.NODE_ENV == 'production' && schema != 'https' ) {
         res.redirect(303, 'https://' + req.headers.host + req.url);
     } else {
+        // Apply HTTP Strict Transport Security for 1 day
+        if( process.env.NODE_ENV == 'production' && schema == 'https' ) {
+            res.set('Strict-Transport-Security', 'max-age=86400');
+        }
+
         req.next();
     }
 });
