@@ -1,6 +1,7 @@
 <br />
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-5 col-md-push-6 signin-message"></div>
+    <div class="col-md-6 col-md-pull-5">
         <div class="panel panel-warning" id="signin-panel">
             <div class="panel-heading">
                 <h3 class="panel-title">Please sign-in.</h3>
@@ -29,3 +30,17 @@
         </div>
     </div>
 </div>
+
+<script id="success-message-tpl" type="text/x-handlebars-template">
+    <div class="alert alert-success alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        \{{{yd message}}}
+    </div>
+</script>
+
+<script id="error-message-tpl" type="text/x-handlebars-template">
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        \{{{message}}}
+    </div>
+</script>

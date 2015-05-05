@@ -2,9 +2,43 @@
     var signin = window.signin = {};
 
     var uri = new URI();
+    var compiledTemplate = {};
     signin.init = function() {
         // bind click event for signin button
         $("#signin-panel button").click(function() { signin.submit(); });
+
+        // show dialog if fragment appears in URL
+        var state = uri.fragment();
+
+        if( state.length > 0 ) {
+            var tpl, msg;
+
+            switch(state) {
+                case 'invalid_activation':
+                    tpl = "#error-message-tpl";
+                    msg = "Invalid activation link.";
+                    break;
+                case 'account_activated':
+                    tpl = "#success-message-tpl";
+                    msg = "Account activated! Please sign-in to continue.";
+                    break;
+                case 'password_changed':
+                    tpl = "#success-message-tpl";
+                    msg = "Password changed. Please sign-in again.";
+                    break;
+                case 'account_created':
+                    tpl = "#success-message-tpl";
+                    msg = "Account created. Please complete the steps in confirmation email.";
+                    break;
+            }
+
+            if( typeof compiledTemplate[tpl] == "undefined" ) {
+                compiledTemplate[tpl] = Handlebars.compile($(tpl).html());
+            }
+
+            var rendered = compiledTemplate[tpl]({message: msg});
+            $(".signin-message").html(rendered);
+        }
     };
 
     signin.submit = function() {
