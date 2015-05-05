@@ -36,10 +36,9 @@
             type: "POST",
             url: "/account/api/create",
             data: form.serialize(),
-            dataType: "json",
         }).done(function(response) {
             // redirect to signin page
-            location.href = "/account/login";
+            location.href = "/account/login#account_created";
 
         }).error(function(error) {
             // compile "error-message-tpl" if needed
