@@ -1,0 +1,70 @@
+<br />
+<div id="create-account" class="row">
+    <div class="col-md-4 col-md-push-7 message"></div>
+    <div class="col-md-7 col-md-pull-4">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">Create Account</h3>
+            </div>
+            <div class="panel-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label for="email" class="col-sm-3 control-label">Email address</label>
+                        <div class="col-sm-9">
+                            <input type="email" class="form-control" id="email" name="email" placeholder="" required />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="col-sm-3 control-label">Password<br/>(length >= 8)</label>
+                        <div class="col-sm-9">
+                            <input type="password" class="form-control" id="password" name="password" placeholder="" required pattern="^.{8,}$" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-password" class="col-sm-3 control-label">Confirm Password</label>
+                        <div class="col-sm-9">
+                            <input type="password" class="form-control" id="confirm-password" placeholder="" required pattern="^.{8,}$" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="button" class="btn btn-warning">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script id="warn-invalid-form-tpl" type="text/x-handlebars-template">
+    {{!-- before context-parser-handlebars:
+    <p>The following fields are invalid:</p>
+    <ul>
+        \{{#fields}}
+        <li>\{{.}}</li>
+        \{{/fields}}
+    </ul>
+    --}}
+
+    <p>The following fields are invalid:</p>
+    <ul>
+        \{{#fields}}
+        <li>\{{{yd .}}}</li>
+        \{{/fields}}
+    </ul>
+</script>
+
+<script id="success-message-tpl" type="text/x-handlebars-template">
+    <div class="alert alert-success alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        \{{{yd message}}}
+    </div>
+</script>
+
+<script id="error-message-tpl" type="text/x-handlebars-template">
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        \{{{message}}}
+    </div>
+</script>

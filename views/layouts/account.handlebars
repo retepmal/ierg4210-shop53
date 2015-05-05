@@ -17,11 +17,19 @@
 
             {{#equal userSection 'login'}}
                 <li role="presentation" class="pull-right"><a href="/" class="text-success">Return to Store</a></li>
+                <li role="presentation" class="pull-right"><a href="/account/create" class="text-success">Create Account</a></li>
+                <li role="presentation" class="pull-right active"><a href="/account/login" class="text-warning">Sign In</a></li>
             {{else}}
+                {{#equal userSection 'create'}}
+                <li role="presentation" class="pull-right"><a href="/" class="text-success">Return to Store</a></li>
+                <li role="presentation" class="pull-right active"><a href="/account/create" class="text-success">Create Account</a></li>
+                <li role="presentation" class="pull-right"><a href="/account/login" class="text-warning">Sign In</a></li>
+                {{else}}
                 <li role="presentation" {{#equal userSection 'orders'}}class="active"{{/equal}}><a href="/account">Orders</a></li>
                 <li role="presentation" class="pull-right"><a href="/account/logout" class="text-danger">Sign Out</a></li>
                 <li role="presentation" {{#equal userSection 'newpassword'}}class="active pull-right"{{/equal}} class="pull-right"><a href="/account/newpassword" class="text-warning">Change Password</a></li>
                 <li role="presentation" class="pull-right"><a href="/" class="text-success">Return to Store</a></li>
+                {{/equal}}
             {{/equal}}
             </ul>
 

@@ -9,5 +9,7 @@ module.exports = {
     "awsSecretKey": process.env.AWS_SECRET_KEY,
     "awsRegion": process.env.AWS_REGION,
     "s3ImagesBucket": process.env.AWS_S3_BUCKET,
-    "s3ImagesDomain": process.env.AWS_S3_BUCKET + ".s3-" + process.env.AWS_REGION + ".amazonaws.com"
+    "s3ImagesDomain": process.env.AWS_S3_BUCKET + ".s3-" + process.env.AWS_REGION + ".amazonaws.com",
+    "gmailUser": process.env.GMAIL_USER,
+    "gmailPass": process.env.GMAIL_PASS
 };

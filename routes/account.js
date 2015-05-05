@@ -1,14 +1,35 @@
 var express = require('express'),
     expressValidator = require('express-validator'),
     bodyParser = require('body-parser'),
-    crypto = require('crypto');
+    crypto = require('crypto'),
+    uuid = require('uuid'),
+    nodemailer = require('nodemailer');
 
-module.exports = function(pool) {
+module.exports = function(pool, config) {
     var app  = express.Router();
+
+    var transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+            user: config.gmailUser,
+            pass: config.gmailPass
+        }
+    });
 
     app.use(bodyParser.urlencoded({extended:true}));
     // this line must be immediately after express.bodyParser()!
-    app.use(expressValidator());
+    app.use(expressValidator({
+        errorFormatter: function(param, msg, value) {
+            var namespace = param.split('.')
+              , root      = namespace.shift()
+              , formParam = root;
+
+            while(namespace.length) {
+                formParam += '[' + namespace.shift() + ']';
+            }
+            return msg;
+        }
+    }));
 
     var signinPage = function(req, res) {
         var cspRules = "default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self'; font-src 'self'; connect-src 'self'";
@@ -102,6 +123,120 @@ module.exports = function(pool) {
                         return res.status(401).end();
                     });
                 }
+            }
+        );
+    });
+
+    // expected: /account/create
+    app.get('/create', function(req, res) {
+        var cspRules = "default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self'; font-src 'self'; img-src 'self'; connect-src 'self'";
+        res.set('Content-Security-Policy', cspRules);
+        res.set('X-Content-Security-Policy', cspRules);
+        res.set('X-WebKit-CSP', cspRules);
+
+        res.render('account-create', {
+            layout: 'account',
+            userSection: 'create',
+            uiScripts: ['ui.account.create.js'],
+            _csrf: req.csrfToken()
+        });
+    });
+
+    // expected: /account/api/create
+    app.post('/api/create', function(req, res) {
+        // run input validations
+        req.checkBody('email')
+            .notEmpty()
+            .isEmail();
+        req.checkBody('password')
+            .notEmpty()
+            .len(8);
+
+        // reject when any validation error occurs
+        var errors = req.validationErrors();
+        if( errors ) {
+            return res.status(400).send(errors).end();
+        }
+
+        var email = req.body.email;
+        var salt = crypto.randomBytes(32).toString('base64');
+        var saltedPassword = crypto.createHmac('sha256', salt);
+            saltedPassword.update(req.body.password);
+        var activationKey = uuid.v4();
+
+        // insert user record
+        pool.query('INSERT INTO users (email, password, salt, activation_key, is_admin) VALUES (?, ?, ?, ?, 0)',
+            [email, saltedPassword.digest('base64'), salt, activationKey],
+            function(error, result) {
+                if( error ) {
+                    if( error.errno == 1062 ) {
+                        // #1062 - Duplicate entry for key 'email'
+                        var errors = 'Email Already Registered';
+                    } else {
+                        var errors = 'Database Error';
+                    }
+
+                    return res.status(400).send(errors).end();
+                }
+
+                // send email for account confirmation
+                var activationLink = config.baseUri + "/account/activate/" + email + "/" + activationKey;
+                var mailOptions = {
+                    from: 'Rilakkuma Store (IERG4210 Shop53) <' + config.gmailUser + '>',
+                    to: email,
+                    subject: 'Account activation for Rilakkuma Store (IERG4210 Shop53)',
+                    html: 'Hi,<br /><br />Please visit the following link to activate your account:<br />' +
+                          '<a href="' + activationLink + '">' + activationLink + '</a><br /><br />Rilakkuma Store<br />(IERG4210 Shop53)'
+                };
+
+                transporter.sendMail(mailOptions, function(error, info){
+                    if( error ) {
+                        return res.status(400).send("Account created but email confirmation failed to send. Please contact store admin.").end();
+                    }
+
+                    return res.status(200).end();
+                });
+            }
+        );
+    });
+
+    // expected: /account/activate/(email)/(activation_key)
+    app.get('/activate/:email/:activation_key', function(req, res) {
+        var invalidLinkRedirect = '/account/login#invalid_activation';
+        var successActivateRedirect = '/account/login#account_activated';
+
+        // run input validations
+        req.checkParams('email')
+            .notEmpty()
+            .isEmail();
+        req.checkParams('activation_key')
+            .notEmpty()
+            .isUUID();
+
+        // reject when any validation error occurs
+        var errors = req.validationErrors();
+        if( errors ) {
+            return res.redirect(307, invalidLinkRedirect);
+        }
+
+        pool.query('SELECT uid FROM users WHERE email = ? AND activation_key = ? LIMIT 1',
+            [req.params.email, req.params.activation_key],
+            function(error, result) {
+                if( error || result.rowCount == 0 ) {
+                    return res.redirect(307, invalidLinkRedirect);
+                }
+
+                pool.query('UPDATE users SET activation_key = NULL WHERE uid = ? LIMIT 1',
+                    [result.rows[0].uid],
+                    function(error, result) {
+                        if( error || result.affectedRows === 0 ) {
+                            return res.redirect(307, invalidLinkRedirect);
+                        }
+
+                        // redirect user to signin page with successful message
+                        return res.redirect(307, successActivateRedirect);
+                    }
+                );
             }
         );
     });
