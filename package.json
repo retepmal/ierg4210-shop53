@@ -47,7 +47,8 @@
     "paypal-rest-sdk": "^1.5.2",
     "redis": "^0.12.1",
     "slug": "^0.9.1",
-    "uuid": "^2.0.1"
+    "uuid": "^2.0.1",
+    "visualcaptcha": "^0.1.0"
   },
   "devDependencies": {
     "supervisor": "^0.6.0"

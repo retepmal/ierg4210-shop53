@@ -2,14 +2,30 @@
     var create = window.create = {};
 
     var compiledTemplate = {};
+    var captchaElement;
     create.init = function() {
         // bind account creation submit botton event
         $("div#create-account button").click(function() { create.submit(this); });
+
+        // create captcha elements
+        captchaElement = $('#captcha').visualCaptcha({
+            imgPath: '/images/',
+            captcha: {
+                numberOfImages: 6,
+                routes: {
+                    start: '/vc/start',
+                    image: '/vc/image',
+                    audio: '/vc/audio'
+                }
+            }
+        });
     }
 
     create.submit = function(btn) {
+        var capthca = captchaElement.data('captcha');
+
         var form = $(btn).parents("form");
-        if( !checkForm(form, "div#create-account .message", "password", "confirm-password") ) {
+        if( !checkForm(form, "div#create-account .message", "password", "confirm-password", capthca) ) {
             return;
         }
 
@@ -46,13 +62,16 @@
             var rendered = compiledTemplate.errorMessage({message: message});
             $("div#create-account .message").html(rendered);
 
+            // re-generate a new set of captcha
+            capthca.refresh();
+
             // enable submit button
             $("div#create-account button").prop('disabled', false);
         });
     }
 
     // private function: check form validity
-    var checkForm = function(form, errorDiv, equalField1, equalField2) {
+    var checkForm = function(form, errorDiv, equalField1, equalField2, capthca) {
         $(errorDiv).text("");
         var invalidFields = [];
         var invalidRadio = [];
@@ -74,6 +93,11 @@
                 $(v).parent().addClass("has-error");
             }
         });
+
+        // check capthca if filled or not
+        if( !capthca.getCaptchaData().valid ) {
+            invalidFields.push("Please answer the capthca");
+        }
 
         // check two fields are equal or not
         if( typeof equalField1 != "undefined" && typeof equalField2 != "undefined" ) {

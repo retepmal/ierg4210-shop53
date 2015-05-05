@@ -129,10 +129,47 @@ module.exports = function(pool, config) {
         res.render('account-create', {
             layout: 'account',
             userSection: 'create',
-            uiScripts: ['ui.account.create.js'],
+            uiScripts: [
+                'visualcaptcha.jquery.js',
+                'ui.account.create.js'
+            ],
             _csrf: req.csrfToken()
         });
     });
+
+    // verify captcha using the following code captured from official demo
+    var verifyCaptcha = function(req) {
+        var visualCaptcha,
+            namespace = req.query.namespace,
+            frontendData,
+            imageAnswer,
+            audioAnswer;
+
+        // Initialize visualCaptcha
+        visualCaptcha = require( 'visualcaptcha' )( req.session, req.query.namespace );
+        frontendData = visualCaptcha.getFrontendData();
+
+        // It's not impossible this method is called before visualCaptcha is initialized, so we have to send a 404
+        if( !(typeof frontendData === 'undefined') ) {
+
+            // If an image field name was submitted, try to validate it
+            if ( ( imageAnswer = req.body[ frontendData.imageFieldName ] ) ) {
+                if ( visualCaptcha.validateImage( imageAnswer ) ) {
+                    return true;
+                }
+            } else if ( ( audioAnswer = req.body[ frontendData.audioFieldName ] ) ) {
+                // We set lowercase to allow case-insensitivity, but it's actually optional
+                if ( visualCaptcha.validateAudio( audioAnswer.toLowerCase() ) ) {
+                    return true;
+                }
+            }
+        }
+
+        // generate a new set of image to prevent abuse
+        visualCaptcha.generate(5);
+
+        return false;
+    }
 
     // expected: /account/api/create
     app.post('/api/create', function(req, res) {
@@ -143,6 +180,10 @@ module.exports = function(pool, config) {
         req.checkBody('password')
             .notEmpty()
             .isLength(8);
+
+        if( !verifyCaptcha(req) ) {
+            return res.status(400).send("Invalid Captcha").end();
+        }
 
         // reject when any validation error occurs
         var errors = req.validationErrors();

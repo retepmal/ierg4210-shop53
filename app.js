@@ -16,7 +16,8 @@ var anyDB   = require('any-db'),
     accountAPIRouter  = require(__dirname + '/routes/account.api.js'),
     authRouter        = require(__dirname + '/routes/auth.api.js'),
     backEndRouter     = require(__dirname + '/routes/backend.js'),
-    backEndAPIRouter  = require(__dirname + '/routes/backend.api.js');
+    backEndAPIRouter  = require(__dirname + '/routes/backend.api.js'),
+    visualCaptchaAPI  = require(__dirname + '/routes/visualcaptcha.js');
 
 var app = express();
 var redisClient = redis.createClient(config.redisPort, config.redisHost);
@@ -79,7 +80,7 @@ app.use('/', function(req, res) {
         }
 
         // Apply CSP Rules for all pages
-        var cspRules = "default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self'; font-src 'self'; img-src " + config.s3ImagesDomain + "; connect-src 'self'";
+        var cspRules = "default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self'; font-src 'self'; img-src 'self' " + config.s3ImagesDomain + "; media-src 'self'; connect-src 'self'";
         res.set('Content-Security-Policy', cspRules);
         res.set('X-Content-Security-Policy', cspRules);
         res.set('X-WebKit-CSP', cspRules);
@@ -93,6 +94,7 @@ app.use('/', frontEndRouter(pool));
 app.use('/api', frontEndAPIRouter(pool));
 app.use('/cart', cartRouter(pool));
 app.use('/checkout', checkoutRouter(pool, config, redisClient));
+app.use('/account/vc', visualCaptchaAPI());
 app.use('/account', accountRouter(pool, config)); // highest priority in /account
 app.use('/account/api', accountAPIRouter(pool));
 app.use('/admin', authRouter(pool)); // highest priority in /admin
