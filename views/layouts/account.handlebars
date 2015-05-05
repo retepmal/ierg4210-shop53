@@ -20,6 +20,7 @@
             {{else}}
                 <li role="presentation" {{#equal userSection 'orders'}}class="active"{{/equal}}><a href="/account">Orders</a></li>
                 <li role="presentation" class="pull-right"><a href="/account/logout" class="text-danger">Sign Out</a></li>
+                <li role="presentation" {{#equal userSection 'newpassword'}}class="active pull-right"{{/equal}} class="pull-right"><a href="/account/newpassword" class="text-warning">Change Password</a></li>
                 <li role="presentation" class="pull-right"><a href="/" class="text-success">Return to Store</a></li>
             {{/equal}}
             </ul>

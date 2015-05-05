@@ -1,7 +1,12 @@
-var express = require('express');
+var express = require('express'),
+    crypto = require('crypto');
 
 module.exports = function(pool) {
     var app  = express.Router();
+
+    var inputPattern = {
+        password: /^.{8,}$/,
+    };
 
     // expected: /account/api/orders
     app.get('/orders', function(req, res) {
@@ -92,6 +97,72 @@ module.exports = function(pool) {
                         res.status(200).json(response).end();
                     });
                 });
+            }
+        );
+    });
+
+    // expected: /account/api/newpassword
+    app.post('/newpassword', function(req, res) {
+        // run input validations
+        req.checkBody('password', 'Current Password')
+            .notEmpty()
+            .matches(inputPattern.password);
+        req.checkBody('newPassword', 'New Password')
+            .notEmpty()
+            .matches(inputPattern.password);
+
+        // reject when any validation error occurs
+        var errors = req.validationErrors();
+        if( errors ) {
+            return res.status(400).send(errors).end();
+        }
+
+        var userid = req.session.uid;
+
+        var changePassword = function() {
+            var salt = crypto.randomBytes(32).toString('base64');
+            var saltedPassword = crypto.createHmac('sha256', salt);
+                saltedPassword.update(req.body.newPassword);
+
+            pool.query('UPDATE users SET salt = ?, password = ? WHERE uid = ? LIMIT 1',
+                [salt, saltedPassword.digest('base64'), userid],
+                function(error, result) {
+                    if( error || result.affectedRows === 0 ) {
+                        return res.status(500).send('Database Error').end();
+                    }
+
+                    req.session.destroy();
+                    return res.status(200).end();
+                }
+            );
+        }
+
+        // check is the password correct
+        pool.query('SELECT salt, password FROM users WHERE uid = ? LIMIT 1',
+            [userid],
+            function(error, result) {
+                if( error ) {
+                    return res.status(500).send('Database Error').end();
+                }
+
+                if( result.rowCount > 0 ) {
+                    var salt = result.rows[0].salt;
+                    var hmac = crypto.createHmac('sha256', salt);
+
+                    hmac.update(req.body.password);
+                    if( hmac.digest('base64') == result.rows[0].password ) {
+                        // verified password, start changing password
+                        changePassword();
+
+                    } else {
+                        // password is wrong
+                        return res.status(401).send('Incorrect current password').end();
+                    }
+
+                } else {
+                    // shouldn't reach here, no account found?
+                    return res.status(500).send('Database Error').end();
+                }
             }
         );
     });

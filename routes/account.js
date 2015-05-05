@@ -154,5 +154,20 @@ module.exports = function(pool) {
         });
     });
 
+    // expected: /account/newpassword
+    app.get('/newpassword', function(req, res) {
+        var cspRules = "default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self'; font-src 'self'; img-src 'self'; connect-src 'self'";
+        res.set('Content-Security-Policy', cspRules);
+        res.set('X-Content-Security-Policy', cspRules);
+        res.set('X-WebKit-CSP', cspRules);
+
+        res.render('account-newpassword', {
+            layout: 'account',
+            userSection: 'newpassword',
+            uiScripts: ['ui.newpassword.js'],
+            _csrf: req.csrfToken()
+        });
+    });
+
     return app;
 };

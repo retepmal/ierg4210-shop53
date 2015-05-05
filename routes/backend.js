@@ -41,5 +41,20 @@ module.exports = function(pool, config) {
         });
     });
 
+    // expected: /admin/newpassword
+    app.get('/newpassword', function(req, res) {
+        var cspRules = "default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self'; font-src 'self'; connect-src 'self'";
+        res.set('Content-Security-Policy', cspRules);
+        res.set('X-Content-Security-Policy', cspRules);
+        res.set('X-WebKit-CSP', cspRules);
+
+        res.render('admin-newpassword', {
+            layout: 'admin',
+            adminSection: 'newpassword',
+            uiScripts: ['ui.admin.newpassword.js'],
+            _csrf: req.csrfToken()
+        });
+    });
+
     return app;
 };
