@@ -49,7 +49,7 @@
                 <tbody>
                 \{{#items}}
                     <tr class="order-items">
-                        <td class="col-md-2"><img src="/images/products/\{{pid}}.\{{image_extension}}" class="img-thumbnail " /></td>
+                        <td class="col-md-2"><img src="\{{image_path}}" class="img-thumbnail " /></td>
                         <td class="col-md-4">\{{name}}</td>
                         <td class="col-md-1 text-right">\{{quantity}}</td>
                         <td class="col-md-3">\{{currency}} \{{price}}</td>
@@ -93,7 +93,7 @@
                 <tbody>
                 \{{#items}}
                     <tr class="order-items">
-                        <td class="col-md-2"><img src="/images/products/\{{{yavd (yu pid)}}}.\{{{yavd (yu image_extension)}}}" class="img-thumbnail " /></td>
+                        <td class="col-md-2"><img src="\{{{yavd (yu image_path)}}}" class="img-thumbnail " /></td>
                         <td class="col-md-4">\{{{yd name}}}</td>
                         <td class="col-md-1 text-right">\{{{yd quantity}}}</td>
                         <td class="col-md-3">\{{{yd currency}}} \{{{yd price}}}</td>
@@ -111,7 +111,7 @@
         \{{#retry}}
         <div class="panel-footer text-right">
             You may want to:
-            <a href="\{{{yavd (yu .)}}}" class="btn btn-success">Retry payment</a>
+            <a href="\{{{yavd (yu .)}}}" class="btn btn-warning">Retry payment</a>
         </div>
         \{{/retry}}
     </div>

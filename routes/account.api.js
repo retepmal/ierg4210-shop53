@@ -80,7 +80,7 @@ module.exports = function(pool) {
                     whereClause = productIds.join(',');
 
                     // query all product information
-                    pool.query('SELECT pid, image_extension FROM products WHERE pid in (' + whereClause + ') ORDER BY pid ASC',
+                    pool.query('SELECT pid, s3_image_path FROM products WHERE pid in (' + whereClause + ') ORDER BY pid ASC',
                         function(error, result) {
                         if( error ) {
                             return res.status(500).send('Database Error').end();
@@ -89,7 +89,7 @@ module.exports = function(pool) {
                         for( var i = 0; i < result.rowCount; i++ ){
                             var pid = parseInt(result.rows[i].pid);
                             if( typeof productInfo[pid] != 'undefined' ) {
-                                productInfo[pid].image_extension = result.rows[i].image_extension;
+                                productInfo[pid].image_path = result.rows[i].s3_image_path;
                                 response.items.push(productInfo[pid]);
                             }
                         }
