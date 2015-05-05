@@ -43,7 +43,6 @@ module.exports = function(pool, config) {
         name: /^[\w- ']+$/,
         price: /^\d+(\.\d{1,2})?$/,
         description: /^[\w- ',\r\n]+$/,
-        password: /^.{8,}$/,
     };
 
     // expected: /admin/api/cat/list
@@ -469,10 +468,10 @@ module.exports = function(pool, config) {
         // run input validations
         req.checkBody('password', 'Current Password')
             .notEmpty()
-            .matches(inputPattern.password);
+            .isLength(8);
         req.checkBody('newPassword', 'New Password')
             .notEmpty()
-            .matches(inputPattern.password);
+            .isLength(8);
 
         // reject when any validation error occurs
         var errors = req.validationErrors();

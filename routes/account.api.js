@@ -4,10 +4,6 @@ var express = require('express'),
 module.exports = function(pool) {
     var app  = express.Router();
 
-    var inputPattern = {
-        password: /^.{8,}$/,
-    };
-
     // expected: /account/api/orders
     app.get('/orders', function(req, res) {
         pool.query('SELECT payid, paymentId, state, DATE_FORMAT(dateCreated, "%Y/%c/%d %r") AS dateTime FROM payments WHERE userid = ? ORDER BY dateCreated ASC',
@@ -106,10 +102,10 @@ module.exports = function(pool) {
         // run input validations
         req.checkBody('password', 'Current Password')
             .notEmpty()
-            .matches(inputPattern.password);
+            .isLength(8);
         req.checkBody('newPassword', 'New Password')
             .notEmpty()
-            .matches(inputPattern.password);
+            .isLength(8);
 
         // reject when any validation error occurs
         var errors = req.validationErrors();

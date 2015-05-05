@@ -53,9 +53,11 @@ module.exports = function(pool, config) {
     app.post('/api/login', function(req, res) {
         // run input validations
         req.checkBody('email')
+            .notEmpty()
             .isEmail();
         req.checkBody('password')
-            .notEmpty();
+            .notEmpty()
+            .isLength(8);
 
         // reject when any validation error occurs
         var errors = req.validationErrors();
@@ -140,7 +142,7 @@ module.exports = function(pool, config) {
             .isEmail();
         req.checkBody('password')
             .notEmpty()
-            .len(8);
+            .isLength(8);
 
         // reject when any validation error occurs
         var errors = req.validationErrors();
