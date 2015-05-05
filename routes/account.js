@@ -32,11 +32,6 @@ module.exports = function(pool, config) {
     }));
 
     var signinPage = function(req, res) {
-        var cspRules = "default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self'; font-src 'self'; connect-src 'self'";
-        res.set('Content-Security-Policy', cspRules);
-        res.set('X-Content-Security-Policy', cspRules);
-        res.set('X-WebKit-CSP', cspRules);
-
         res.render('account-login', {
             layout: 'account',
             userSection: 'login',
@@ -129,11 +124,6 @@ module.exports = function(pool, config) {
 
     // expected: /account/create
     app.get('/create', function(req, res) {
-        var cspRules = "default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self'; font-src 'self'; img-src 'self'; connect-src 'self'";
-        res.set('Content-Security-Policy', cspRules);
-        res.set('X-Content-Security-Policy', cspRules);
-        res.set('X-WebKit-CSP', cspRules);
-
         res.render('account-create', {
             layout: 'account',
             userSection: 'create',
@@ -276,11 +266,6 @@ module.exports = function(pool, config) {
 
     // expected: /account
     app.get('/', function(req, res) {
-        var cspRules = "default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self'; font-src 'self'; img-src 'self'; connect-src 'self'";
-        res.set('Content-Security-Policy', cspRules);
-        res.set('X-Content-Security-Policy', cspRules);
-        res.set('X-WebKit-CSP', cspRules);
-
         res.render('account-orders', {
             layout: 'account',
             userSection: 'orders',
@@ -291,11 +276,6 @@ module.exports = function(pool, config) {
 
     // expected: /account/newpassword
     app.get('/newpassword', function(req, res) {
-        var cspRules = "default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self'; font-src 'self'; img-src 'self'; connect-src 'self'";
-        res.set('Content-Security-Policy', cspRules);
-        res.set('X-Content-Security-Policy', cspRules);
-        res.set('X-WebKit-CSP', cspRules);
-
         res.render('account-newpassword', {
             layout: 'account',
             userSection: 'newpassword',

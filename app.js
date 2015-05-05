@@ -78,19 +78,25 @@ app.use('/', function(req, res) {
             res.set('Strict-Transport-Security', 'max-age=86400');
         }
 
+        // Apply CSP Rules for all pages
+        var cspRules = "default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self'; font-src 'self'; img-src " + config.s3ImagesDomain + "; connect-src 'self'";
+        res.set('Content-Security-Policy', cspRules);
+        res.set('X-Content-Security-Policy', cspRules);
+        res.set('X-WebKit-CSP', cspRules);
+
         req.next();
     }
 });
 
 // include frontend and backend routers
-app.use('/', frontEndRouter(pool, config));
+app.use('/', frontEndRouter(pool));
 app.use('/api', frontEndAPIRouter(pool));
 app.use('/cart', cartRouter(pool));
 app.use('/checkout', checkoutRouter(pool, config, redisClient));
 app.use('/account', accountRouter(pool, config)); // highest priority in /account
 app.use('/account/api', accountAPIRouter(pool));
 app.use('/admin', authRouter(pool)); // highest priority in /admin
-app.use('/admin', backEndRouter(pool, config));
+app.use('/admin', backEndRouter(pool));
 app.use('/admin/api', backEndAPIRouter(pool, config));
 
 // handle 404 not found situation
