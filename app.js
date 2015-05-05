@@ -85,6 +85,9 @@ app.use('/', function(req, res) {
         res.set('X-Content-Security-Policy', cspRules);
         res.set('X-WebKit-CSP', cspRules);
 
+        // Avoid clickjacking
+        res.set('X-Frame-Options', 'DENY');
+
         req.next();
     }
 });
