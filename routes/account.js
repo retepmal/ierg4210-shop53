@@ -32,6 +32,11 @@ module.exports = function(pool, config) {
     }));
 
     var signinPage = function(req, res) {
+        if( req.session && req.session.authenticated ) {
+            // user signed in should be here
+            return res.redirect(307, '/account');
+        }
+
         res.render('account-login', {
             layout: 'account',
             userSection: 'login',
@@ -51,6 +56,11 @@ module.exports = function(pool, config) {
 
     // expected: /account/api/login
     app.post('/api/login', function(req, res) {
+        if( req.session && req.session.authenticated ) {
+            // user signed in should be here
+            return res.status(409).send('Conflict').end();
+        }
+
         // run input validations
         req.checkBody('email')
             .notEmpty()
@@ -126,6 +136,11 @@ module.exports = function(pool, config) {
 
     // expected: /account/create
     app.get('/create', function(req, res) {
+        if( req.session && req.session.authenticated ) {
+            // user signed in should be here
+            return res.redirect(307, '/account');
+        }
+
         res.render('account-create', {
             layout: 'account',
             userSection: 'create',
@@ -173,6 +188,11 @@ module.exports = function(pool, config) {
 
     // expected: /account/api/create
     app.post('/api/create', function(req, res) {
+        if( req.session && req.session.authenticated ) {
+            // user signed in should be here
+            return res.status(409).send('Conflict').end();
+        }
+
         // run input validations
         req.checkBody('email')
             .notEmpty()
@@ -267,7 +287,9 @@ module.exports = function(pool, config) {
                         }
 
                         // redirect user to signin page with successful message
-                        return res.redirect(307, successActivateRedirect);
+                        req.session.regenerate(function() {
+                            res.redirect(307, successActivateRedirect);
+                        });
                     }
                 );
             }
