@@ -98,6 +98,7 @@
         }).done(function(response) {
             var tplVars = {
                 catid: catid,
+                catslug: categorySlugList[catid],
                 pages: []
             };
 
