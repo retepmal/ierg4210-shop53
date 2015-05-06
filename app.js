@@ -110,11 +110,6 @@ app.use(function(req, res, next) {
         res.status(404).send('Not Found').end();
 
     } else {
-        var cspRules = "default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self'; font-src 'self'; connect-src 'self'";
-        res.set('Content-Security-Policy', cspRules);
-        res.set('X-Content-Security-Policy', cspRules);
-        res.set('X-WebKit-CSP', cspRules);
-
         res.status(404).render('error-notfound', {
             layout: 'error'
         });
