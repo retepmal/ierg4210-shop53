@@ -9,3 +9,10 @@ Application Url: http://shop53-ierg4210.elasticbeanstalk.com/
 * Setup HTTP Strict Transport Security (HSTS) for your HTTPS pages
 * Build a user sign-up page hosted at /account/create
 * Support Change of Password
+
+#### Informations for phase 7b
+Website: https://store53.ierg4210.org/
+Email: user@retepmal.com
+Password: ierg4210
+
+You are also welcome to create your own account. :)
