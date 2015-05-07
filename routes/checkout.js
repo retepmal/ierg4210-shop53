@@ -223,11 +223,6 @@ module.exports = function(pool, config, redisClient) {
             }
         }
 
-        var cspRules = "default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'";
-        res.set('Content-Security-Policy', cspRules);
-        res.set('X-Content-Security-Policy', cspRules);
-        res.set('X-WebKit-CSP', cspRules);
-
         res.render('checkout-error', {
             layout: 'checkout',
             errorType: errorType,

@@ -9,13 +9,6 @@ module.exports = function(pool) {
     // this line must be immediately after express.bodyParser()!
     app.use(expressValidator({
         errorFormatter: function(param, msg, value) {
-            var namespace = param.split('.')
-              , root      = namespace.shift()
-              , formParam = root;
-
-            while(namespace.length) {
-                formParam += '[' + namespace.shift() + ']';
-            }
             return msg;
         }
     }));
